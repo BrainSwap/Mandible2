@@ -1,0 +1,28 @@
+/* Device specific sizes: */
+body.ipad.landscape #container {
+    height: 700px;
+}
+
+body.ipad.portrait #container {
+    height: 956px;
+}
+
+/*ipad screen is 1024 x 768 - 20 pixel status bar*/
+body.ipad.homescreen.landscape #container {
+    height: 748px;
+}
+
+body.ipad.homescree{
+}
+
+body.ipad.landscape.homescreen{
+}
+
+body.ipad.portrait.homescreen{
+}
+
+body.ipad.portrait{
+}
+
+body.ipad.landscape{
+}

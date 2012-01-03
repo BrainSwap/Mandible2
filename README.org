@@ -1,0 +1,114 @@
+#+TITLE:     Mandible: BrainSwap's web application tool documentation
+#+AUTHOR:    Mauvis Ledford
+#+EMAIL:     mauvis@brainswap.me
+#+DATE:      2011-09-22 Thu
+#+DESCRIPTION:
+#+OPTIONS: ^:{} num:nil
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:
+#+LINK_HOME:
+#+XSLT:
+#+Style: <style> html,body{height: 100%;} body{padding: 5px 30px; h1,h2,h3 {font-family: arial, helvetica, sans-serif} </style>
+:
+:                            _,.---,---.,_
+:                        ,;~'             '~;,
+:                      ,;                     ;,
+:                     ;                         ; ,
+:                    ,'                         /'
+:                   ,;                        /' ;,
+:                   ; ;      .           .   '  ; ;
+:                  | ;   ______       ______   ; |
+:                  |  '/~"     ~" . "~     "~\'  |
+:                  |  ~  ,-~~~^~, | ,~^~~~-,  ~  |
+:                   |   |        }:{        |   |
+:                   |   l       / | \       !   |
+:                    .~  (__,.--" .^. "--.,__)  ~.
+:                   |    ----;' / | \ `;----    |
+:                     \__.       \/^\/       .__/
+:                ___   V| \                 / |V
+:               |      | |T~\___!___!___/~T| |
+:               |      | |`IIII_I_I_I_IIII'| |
+:       Mandible |      |  \,III I I I III,/  |
+:               |       \   `~~~~~~~~~~'    /
+:               |         \   .       .   /
+:               |__         \.    ^    ./
+:                              ^~~~^~~~^
+:
+* Welcome
+
+Mandible2 is a build and development toolset created while developing client projects. Originally created by [[http://www.brainswap.com][BrainSwap]] for client's like [[http://www.socialgeni.us][SocialGenius]] and [[http://www.skype.com/intl/en-us/home][Skype]], it is now maintained here.
+
+* Mandible
+- is a collection of open-source and custom tools for organizing and prepping a web app for production.
+- includes a copy of [[http://getskeleton.com/][Skeleton]], and dimension specific CSS files to get you started with a [[http://www.alistapart.com/articles/responsive-web-design/][responsive]] design.
+- makes your app mobile-ready from the start with the right HTML meta and CSS (taken from [[http://html5boilerplate.com/mobile][HTML5 boilerplate]]).
+- gives your web app a (customizable) folder structure for development and production.
+- concatinates and minifies your CSS and JS files.
+- Comes with [[http://documentcloud.github.com/underscore/#template][Underscore]] for JavaScript templating.
+- allows you to create your own folder hierarchy of JavaScript templates.
+- automatially creates and maintains production assets (css, js, templates).
+- can watch for CSS and template changes and concat them on the fly.
+- Includes a makeFile for concating JS, CSS, and concating templates in one easy step.
+- detects for IE and includes [[http://remysharp.com/2010/10/08/what-is-a-polyfill/][polyfills]] like [[https://github.com/scottjehl/Respond][respond.js]] for parity in IE.
+
+Mandible is targetted toward web apps built on JavaScript MVC frameworks (we love [[http://documentcloud.github.com/backbone/][Backbone]]).
+* Mandible works by
+- compressing and minifying your CSS with [[http://sass-lang.com/][Sass]].
+- compresses and minifying your JS with [[https://github.com/mishoo/UglifyJS][UglifyJS]].
+- externalizing your JavaScript templates and watching for changes with [[https://github.com/krunkosaurus/NodeInterval][NodeInterval]].
+
+* Requirements
+  To use this tools you need to have the following installed:
+- You need to install Ruby (already installed on all macs).
+- You need to install [[http://sass-lang.com/][Sass]]. =sudo gem install sass=
+- You need to instal [[http://nodejs.org/][Node]]. (Compile it from [[http://nodejs.org/#download][here]].)
+Note: Compressed assets are not included in this repo. To see the sample code you must run "make" in the root folder at least once. (Which require you have the above installed.)
+* To use
+** For developers:
+1. In terminal, run the two shell scripts in =/bin=. Keep them open while you do your development and all your CSS and templates changes are automatically merged into the production ready files.
+2. While working, view your changes in =/dev/index.html=
+3. When you're done for the day, compress your JavaScript files by typing =make= in the root project folder. In case your bin scripts are off, this will also automatically compress all CSS, JS, and rerender the templates - but only when necessary.
+4. Verify the production file at =/prod/index.html=.
+** For build managers:
+1. Simply type =make -B= to force all CSS, JS, and templates processes to run. Push to production box(es) and / or CDN.
+
+* Explanation of application architecture
+: .
+: ├── /prod                          <-- "Production" folder container html and compressed assets.
+: │   └── index.html                 <-- The production-ready file you want to view to launch this webapp.
+: ├── /dev                           <-- "Development" folder container html and uncompressed assets.
+: │   └── index.html                 <-- The uncompressed js prod version with concatinated js templates, use this during daily development.
+: ├── /src                           <-- "Template" files
+: │   ├── index.html                 <-- Prod file without templates. Just used to generate real prod file. Never use it.
+: │   ├── index_uncompressed.html    <-- Dev index file with raw js. Do your development here.
+: │   └── /templates                 <-- Folder of JavaScript templates, anytime any of these are edited dev and prod pages get automatically updated.
+: ├── /bin                           <-- Dev shell scripts.
+: │   ├── sass-watch.sh              <-- Run this in another terminal tab to watch for css changes. It will automatically concat and minify to assets/css
+: │   └── template-watch.sh          <-- Run this in another terminal tab to watch for template changes. All templates get concatinated into assets/*.html files.
+: ├── /vendor                        <-- Open-source shell scripts referenced by /bin scripts.
+: └── makefile                       <-- make utility for concatinating and minifying all js (and css and templates) to assets folder.
+
+* Additional tips
+- You should probably put production ready folders =prod/js= and =prod/js= under =.gitignore= so they aren't comitted to your repository (this is done for you.)
+- If you want just the SASS bits steal just the sass script in =/bin/watch-css.sh= and =src/scss/index.scss=.
+- If you want just the js compression features Steal the =makeFile= and the =vendor= folder.
+- If you want just the template concat / watch features clone [[https://github.com/krunkosaurus/NodeInterval][NodeInterval]].
+- We use  [[http://html5boilerplate.com/mobile][HTML Mobile Boilerplate]]. Read up on it for lots of good tidbits like the ellipsis class.
+- We recommend [[http://css3pie.com/][CSSPie]] for advance CSS3 support in IE.
+- We'll probably be open-sourcing our Backbone layer that fits on top of this in the future.
+* Projects we use and recommend:
+- [[http://documentcloud.github.com/backbone/][backbone.js]] - MVC JavaScript framework that utilizes [[http://jquery.com/][jQuery]] and
+  [[http://documentcloud.github.com/underscore/][underscore.js]].
+  Underscore's templating ability is especially useful.
+- [[http://getskeleton.com/][Skeleton]] - Grid-based CSS layout system to allow content to reflow to various
+  browser widths.
+- [[https://developers.facebook.com/docs/reference/javascript/][Facebook JavaScript SDK]] - The JavaScript SDK provides a rich set of
+  client-side functionality for accessing Facebook's server-side API calls.
+- [[http://www.schillmania.com/projects/soundmanager2/][Soundmanager 2]] - Cross-browser audio support.
+- [[http://cubiq.org/iscroll-4][iScroll 4]] - JS lib for native scrolling ability in subsections.
+- [[http://sass-lang.com/][Sass]] - Ruby Gem for organizing and minifying CSS.
+- [[https://github.com/krunkosaurus/NodeInterval][Node Interval]] - Node utility for managing and concatenating template files.

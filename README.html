@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+lang="en" xml:lang="en">
+<head>
+<title>Mandible: BrainSwap's web application tool documentation</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2011-09-22 Thu"/>
+<meta name="author" content="Mauvis Ledford"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>
+<style> html,body{height: 100%;} body{padding: 5px 30px; h1,h2,h3 {font-family: arial, helvetica, sans-serif} </style>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+<div id="content">
+
+<h1 class="title">Mandible: BrainSwap's web application tool documentation</h1>
+<pre class="example">
+
+                           _,.---,---.,_
+                       ,;~'             '~;,
+                     ,;                     ;,
+                    ;                         ; ,
+                   ,'                         /'
+                  ,;                        /' ;,
+                  ; ;      .           .   '  ; ;
+                 | ;   ______       ______   ; |
+                 |  '/~"     ~" . "~     "~\'  |
+                 |  ~  ,-~~~^~, | ,~^~~~-,  ~  |
+                  |   |        }:{        |   |
+                  |   l       / | \       !   |
+                   .~  (__,.--" .^. "--.,__)  ~.
+                  |    ----;' / | \ `;----    |
+                    \__.       \/^\/       .__/
+               ___   V| \                 / |V
+              |      | |T~\___!___!___/~T| |
+              |      | |`IIII_I_I_I_IIII'| |
+      Mandible |      |  \,III I I I III,/  |
+              |       \   `~~~~~~~~~~'    /
+              |         \   .       .   /
+              |__         \.    ^    ./
+                             ^~~~^~~~^
+
+</pre>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">Welcome </a></li>
+<li><a href="#sec-2">Mandible </a></li>
+<li><a href="#sec-3">Mandible works by </a></li>
+<li><a href="#sec-4">Requirements </a></li>
+<li><a href="#sec-5">To use </a>
+<ul>
+<li><a href="#sec-5-1">For developers: </a></li>
+<li><a href="#sec-5-2">For build managers: </a></li>
+</ul>
+</li>
+<li><a href="#sec-6">Explanation of application architecture </a></li>
+<li><a href="#sec-7">Additional tips </a></li>
+<li><a href="#sec-8">Projects we use and recommend: </a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1">Welcome </h2>
+<div class="outline-text-2" id="text-1">
+
+
+<p>
+Mandible2 is a build and development toolset created while developing client projects. Originally created by <a href="http://www.brainswap.com">BrainSwap</a> for client's like <a href="http://www.socialgeni.us">SocialGenius</a> and <a href="http://www.skype.com/intl/en-us/home">Skype</a>, it is now maintained here.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2">Mandible </h2>
+<div class="outline-text-2" id="text-2">
+
+<ul>
+<li>is a collection of open-source and custom tools for organizing and prepping a web app for production.
+</li>
+<li>includes a copy of <a href="http://getskeleton.com/">Skeleton</a>, and dimension specific CSS files to get you started with a <a href="http://www.alistapart.com/articles/responsive-web-design/">responsive</a> design.
+</li>
+<li>makes your app mobile-ready from the start with the right HTML meta and CSS (taken from <a href="http://html5boilerplate.com/mobile">HTML5 boilerplate</a>).
+</li>
+<li>gives your web app a (customizable) folder structure for development and production.
+</li>
+<li>concatinates and minifies your CSS and JS files.
+</li>
+<li>Comes with <a href="http://documentcloud.github.com/underscore/#template">Underscore</a> for JavaScript templating.
+</li>
+<li>allows you to create your own folder hierarchy of JavaScript templates.
+</li>
+<li>automatially creates and maintains production assets (css, js, templates).
+</li>
+<li>can watch for CSS and template changes and concat them on the fly.
+</li>
+<li>Includes a makeFile for concating JS, CSS, and concating templates in one easy step.
+</li>
+<li>detects for IE and includes <a href="http://remysharp.com/2010/10/08/what-is-a-polyfill/">polyfills</a> like <a href="https://github.com/scottjehl/Respond">respond.js</a> for parity in IE.
+</li>
+</ul>
+
+
+<p>
+Mandible is targetted toward web apps built on JavaScript MVC frameworks (we love <a href="http://documentcloud.github.com/backbone/">Backbone</a>).
+</p></div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3">Mandible works by </h2>
+<div class="outline-text-2" id="text-3">
+
+<ul>
+<li>compressing and minifying your CSS with <a href="http://sass-lang.com/">Sass</a>.
+</li>
+<li>compresses and minifying your JS with <a href="https://github.com/mishoo/UglifyJS">UglifyJS</a>.
+</li>
+<li>externalizing your JavaScript templates and watching for changes with <a href="https://github.com/krunkosaurus/NodeInterval">NodeInterval</a>.
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4">Requirements </h2>
+<div class="outline-text-2" id="text-4">
+
+<p>  To use this tools you need to have the following installed:
+</p><ul>
+<li>You need to install Ruby (already installed on all macs).
+</li>
+<li>You need to install <a href="http://sass-lang.com/">Sass</a>. <code>sudo gem install sass</code>
+</li>
+<li>You need to instal <a href="http://nodejs.org/">Node</a>. (Compile it from <a href="http://nodejs.org/#download">here</a>.)
+</li>
+</ul>
+
+<p>Note: Compressed assets are not included in this repo. To see the sample code you must run "make" in the root folder at least once. (Which require you have the above installed.)
+</p></div>
+
+</div>
+
+<div id="outline-container-5" class="outline-2">
+<h2 id="sec-5">To use </h2>
+<div class="outline-text-2" id="text-5">
+
+
+</div>
+
+<div id="outline-container-5-1" class="outline-3">
+<h3 id="sec-5-1">For developers: </h3>
+<div class="outline-text-3" id="text-5-1">
+
+<ol>
+<li>In terminal, run the two shell scripts in <code>/bin</code>. Keep them open while you do your development and all your CSS and templates changes are automatically merged into the production ready files.
+</li>
+<li>While working, view your changes in <code>/dev/index.html</code>
+</li>
+<li>When you're done for the day, compress your JavaScript files by typing <code>make</code> in the root project folder. In case your bin scripts are off, this will also automatically compress all CSS, JS, and rerender the templates - but only when necessary.
+</li>
+<li>Verify the production file at <code>/prod/index.html</code>.
+</li>
+</ol>
+
+</div>
+
+</div>
+
+<div id="outline-container-5-2" class="outline-3">
+<h3 id="sec-5-2">For build managers: </h3>
+<div class="outline-text-3" id="text-5-2">
+
+<ol>
+<li>Simply type <code>make -B</code> to force all CSS, JS, and templates processes to run. Push to production box(es) and / or CDN.
+</li>
+</ol>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-6" class="outline-2">
+<h2 id="sec-6">Explanation of application architecture </h2>
+<div class="outline-text-2" id="text-6">
+
+<pre class="example">
+.
+├── /prod                          &lt;-- "Production" folder container html and compressed assets.
+│   └── index.html                 &lt;-- The production-ready file you want to view to launch this webapp.
+├── /dev                           &lt;-- "Development" folder container html and uncompressed assets.
+│   └── index.html                 &lt;-- The uncompressed js prod version with concatinated js templates, use this during daily development.
+├── /src                           &lt;-- "Template" files
+│   ├── index.html                 &lt;-- Prod file without templates. Just used to generate real prod file. Never use it.
+│   ├── index_uncompressed.html    &lt;-- Dev index file with raw js. Do your development here.
+│   └── /templates                 &lt;-- Folder of JavaScript templates, anytime any of these are edited dev and prod pages get automatically updated.
+├── /bin                           &lt;-- Dev shell scripts.
+│   ├── sass-watch.sh              &lt;-- Run this in another terminal tab to watch for css changes. It will automatically concat and minify to assets/css
+│   └── template-watch.sh          &lt;-- Run this in another terminal tab to watch for template changes. All templates get concatinated into assets/*.html files.
+├── /vendor                        &lt;-- Open-source shell scripts referenced by /bin scripts.
+└── makefile                       &lt;-- make utility for concatinating and minifying all js (and css and templates) to assets folder.
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-7" class="outline-2">
+<h2 id="sec-7">Additional tips </h2>
+<div class="outline-text-2" id="text-7">
+
+<ul>
+<li>You should probably put production ready folders <code>prod/js</code> and <code>prod/js</code> under <code>.gitignore</code> so they aren't comitted to your repository (this is done for you.)
+</li>
+<li>If you want just the SASS bits steal just the sass script in <code>/bin/watch-css.sh</code> and <code>src/scss/index.scss</code>.
+</li>
+<li>If you want just the js compression features Steal the <code>makeFile</code> and the <code>vendor</code> folder.
+</li>
+<li>If you want just the template concat / watch features clone <a href="https://github.com/krunkosaurus/NodeInterval">NodeInterval</a>.
+</li>
+<li>We use  <a href="http://html5boilerplate.com/mobile">HTML Mobile Boilerplate</a>. Read up on it for lots of good tidbits like the ellipsis class.
+</li>
+<li>We recommend <a href="http://css3pie.com/">CSSPie</a> for advance CSS3 support in IE.
+</li>
+<li>We'll probably be open-sourcing our Backbone layer that fits on top of this in the future.
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-8" class="outline-2">
+<h2 id="sec-8">Projects we use and recommend: </h2>
+<div class="outline-text-2" id="text-8">
+
+<ul>
+<li><a href="http://documentcloud.github.com/backbone/">backbone.js</a> - MVC JavaScript framework that utilizes <a href="http://jquery.com/">jQuery</a> and
+  <a href="http://documentcloud.github.com/underscore/">underscore.js</a>.
+  Underscore's templating ability is especially useful.
+</li>
+<li><a href="http://getskeleton.com/">Skeleton</a> - Grid-based CSS layout system to allow content to reflow to various
+  browser widths.
+</li>
+<li><a href="https://developers.facebook.com/docs/reference/javascript/">Facebook JavaScript SDK</a> - The JavaScript SDK provides a rich set of
+  client-side functionality for accessing Facebook's server-side API calls.
+</li>
+<li><a href="http://www.schillmania.com/projects/soundmanager2/">Soundmanager 2</a> - Cross-browser audio support.
+</li>
+<li><a href="http://cubiq.org/iscroll-4">iScroll 4</a> - JS lib for native scrolling ability in subsections.
+</li>
+<li><a href="http://sass-lang.com/">Sass</a> - Ruby Gem for organizing and minifying CSS.
+</li>
+<li><a href="https://github.com/krunkosaurus/NodeInterval">Node Interval</a> - Node utility for managing and concatenating template files.
+</li>
+</ul>
+
+</div>
+</div>
+<div id="postamble">
+<p class="date">Date: 2011-09-22 Thu</p>
+<p class="author">Author: Mauvis Ledford</p>
+<p class="creator">Org version 7.6 with Emacs version 23</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+</div>
+</div>
+</body>
+</html>

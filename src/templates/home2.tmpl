@@ -1,0 +1,13 @@
+<script type="text/template" id="home-template2">
+    <div class="beta block seven columns">
+        <p>Example of loops in <a href="http://documentcloud.github.com/underscore/">underscore</a> templates.</p>
+        <ul>
+            <% _.each(numbers, function(item){ %>
+            <li><%= item %></li>
+            <% }); %>
+        </ul>
+        <p>This is loading from home2.tmpl template.</p>
+        <p>Notice also how these blocks stack. That's <a href="http://getskeleton.com/">Skeleton</a>.</p>
+        <p>Run the bin scripts in /bin. Edit the templates in src/templates and see them update here on the fly.</p>
+    </div>
+</script>

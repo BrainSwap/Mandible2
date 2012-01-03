@@ -1,0 +1,15 @@
+{
+  "name": "compress",
+  "description": "A streaming compression / gzip library for node.js",
+  "version": "0.1.9",
+  "author": "Rhys",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/waveto/node-compress.git"
+  },
+  "scripts": {
+    "pre-install": "node-waf configure && node-waf"
+  },
+  "engine": [ "node >=0.2.5" ],
+  "main": "./build/default/compress"
+}
