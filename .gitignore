@@ -1,8 +1,6 @@
 .sass-cache/
 bin/.sass-cache/
-prod/index.html
-dev/index.html
-prod/js/index.js
-prod/css/index.css
+deploy-debug/
+deploy-prod/
 .DS_Store?
 Thumbs.db
