@@ -13,7 +13,7 @@ trap kill_background_processes SIGINT SIGTERM
 template_watch_pid=$!
 
 # Watch for changes in sass files and render them to CSS files.
-sass --watch --style=compressed ../dev/scss:../prod/css &
+sass --watch --style=compressed ../src/scss:../deploy-prod/css &
 sass_pid=$!
 
 wait $template_watch_pid $sass_pid
