@@ -1,0 +1,46 @@
+#container{
+  padding-top: 50px;
+  text-align: center;
+  margin: 0 auto;
+  div{
+    border: solid 1px grey;
+  }
+
+  #welcome-container{
+    margin-bottom: 10px;
+  }
+}
+/* Sample styling from PieCSS. (http://css3pie.com/) */
+.block{
+  li{
+    display: inline;
+  }
+  &.beta{
+    font-size: 1em;
+  }
+  height: 180px;
+  font-family: helvetica, arial;
+  font-weight: bold;
+  color: black;
+  font-size: 1.2em;
+  cursor: pointer;
+  cursor: hand;
+  @include border-radius(8px);
+  margin-bottom: 10px;
+  border: 1px solid #696;
+  padding: 60px 0;
+  text-align: center;
+  text-shadow: 1px 1px #696;
+  -webkit-box-shadow: #666 0px 2px 3px;
+  -moz-box-shadow: #666 0px 2px 3px;
+  box-shadow: #666 0px 2px 3px;
+  background: #EEFF99;
+  background: -webkit-gradient(linear, 0 0, 0 bottom, from(#EEFF99), to(#66EE33));
+  background: -webkit-linear-gradient(#EEFF99, #66EE33);
+  background: -moz-linear-gradient(#EEFF99, #66EE33);
+  background: -ms-linear-gradient(#EEFF99, #66EE33);
+  background: -o-linear-gradient(#EEFF99, #66EE33);
+  background: linear-gradient(#EEFF99, #66EE33);
+  -pie-background: linear-gradient(#EEFF99, #66EE33);
+  behavior: url(css/PIE.htc);
+}

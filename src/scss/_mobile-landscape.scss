@@ -1,0 +1,11 @@
+/* mobile landscape */
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+    /* demo code */
+    body{
+      background-color: red;
+    }
+}
+
+/* Optional */
+@media only screen and (min-width: 480px) and (max-width: 767px) and (min-height: 401px) {
+}

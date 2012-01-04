@@ -1,0 +1,23 @@
+/* This stuff is barely necc. only to help scroll past address bar. */
+body.iphone.portrait,
+body.iphone.portrait #container {
+    height: 421px;
+}
+
+body.iphone.landscape,
+body.iphone.landscape #container {
+    height: 268px;
+}
+
+body.iphone.portrait.homescreen,
+body.iphone.portrait.homescreen #container {
+    height: 460px;
+}
+
+body.iphone.landscape.homescreen,
+body.iphone.landscape.homescreen #container {
+    height: 300px;
+}
+
+/* Ensure hiding the location bar works */
+body.iphone.portrait{min-height: 416px;}
