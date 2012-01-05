@@ -5,7 +5,7 @@ NodeInterval = require('NodeInterval');
 fs = require('fs');
 var debugDir = "../deploy-debug";
 var debugDirExists = false;
-try { fs.statSync(debugDir); return true } 
+try { fs.statSync(debugDir); debugDirExists = true } 
 catch (er) { }
 if (!debugDirExists) fs.mkdirSync(debugDir, 0777)
 
