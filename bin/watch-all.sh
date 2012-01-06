@@ -1,5 +1,8 @@
 #!/bin/sh
 
+#create default dev folder and sym links
+./create-folders.sh
+
 # Watches both templates and CSS files by running this script.
 # Ctr-c to stop.
 
