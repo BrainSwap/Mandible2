@@ -2,15 +2,18 @@
 /*
 this script monitors src javascript, css, and templates for changes and applies them to /deploy-debug/
 */
-//create default dev folder and sym links
-var util = require('util')
-var exec = require('child_process').exec;
-function puts(error, stdout, stderr) { util.puts(stdout) }
-exec("./create-folders.sh", puts);
-
-var fs = require('fs');
 var debugDir = "../deploy-debug";
 
+var util = require('util')
+var exec = require('child_process').exec;
+
+//delete the current bin-deploy folder to start fresh
+exec("rm -r ../deploy-debug", function(error, stdout, stderr){
+	util.puts(stdout);
+});
+
+var fs = require('fs');
+var watch = require('nodewatch');
 var jsListDirty = true;
 var jsListText;
 var cssListDirty = true;
@@ -80,20 +83,59 @@ function updateDebugIndexFile(now){
 	console.log("updated "+debugDir+"/index.html");
 }
 
-var watch = require('nodewatch');
-//watch changes to javascript list file
-watch.add("../src/js/list.txt").onChange(function(file,prev,curr){
-    console.log("javascript list changed");
-    jsListDirty = true;
+function convertAndCopyCSS(path){
+	var filename = path.split("../src/scss/").join("").split(".scss").join(".css");
+	if (path.indexOf(".css")!=-1){
+		console.log("copy: "+path+" to ../deploy-debug/css/"+filename);
+		exec("cp "+path+" ../deploy-debug/css/"+filename, function(error, stdout, stderr){
+			util.puts(stdout);
+		});
+	} else {
+		exec("sass --style=expanded --update "+path+":../deploy-debug/css/"+filename, function(error, stdout, stderr){
+			util.puts(stdout);
+		});
+	}
+}
+
+//create default dev folder and sym links
+exec("./create-folders.sh", function(error, stdout, stderr){
+	util.puts(stdout);
+	
+	//watch changes to javascript list file
+	watch.add("../src/js/list.txt").onChange(function(file,prev,curr){
+	    console.log("javascript list changed");
+	    jsListDirty = true;
+		updateDebugIndexFile();
+	});
+
+	//watch changes to css list file
+	watch.add("../src/scss/list.txt").onChange(function(file,prev,curr){
+	    console.log("css list changed");
+	    cssListDirty = true;
+		updateDebugIndexFile();
+	});
+
+	//watch for changes to the /src/scss directory, convert all css files over to /deploy-debug/css
+	var watcher = require('watch-tree').watchTree("../src/scss", {'sample-rate': 50, match:'\.(css|scss)$'});
+	watcher.on('fileDeleted', function(path) {
+	    console.log("deleted " + path + "!");
+		var filename = path.split("../src/scss/").join("").split(".scss").join(".css");
+		exec("rm ../deploy-debug/css/"+filename, function(error, stdout, stderr){
+			util.puts(stdout);
+		});
+	});
+	watcher.on('fileCreated', function(path) {
+	    console.log("created " + path + "!");
+		convertAndCopyCSS(path);
+	});
+	watcher.on('fileModified', function(path) {
+	    console.log("modified " + path + "!");
+		convertAndCopyCSS(path);
+	});
+	watcher.on('filePreexisted', function(path) {
+	    //console.log("filePreexisted " + path + "!");
+		convertAndCopyCSS(path);
+	});
+
 	updateDebugIndexFile();
 });
-
-//watch changes to css list file
-watch.add("../src/scss/list.txt").onChange(function(file,prev,curr){
-    console.log("css list changed");
-    cssListDirty = true;
-	updateDebugIndexFile();
-});
-
-//watch for changes to the /src/scss directory, convert all css files over to /deploy-debug/css
-updateDebugIndexFile();

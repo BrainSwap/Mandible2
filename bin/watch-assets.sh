@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+//this script watches static asset folders for changes and copies them to the deploy-debug folder
+//it is not currently used in favor of a sym link. 
 var fs = require('fs');
 var debugDir = "../deploy-debug";
 var debugDirExists = false;
