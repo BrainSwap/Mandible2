@@ -14,10 +14,13 @@ exec("rm -r ../deploy-debug", function(error, stdout, stderr){
 
 var fs = require('fs');
 var watch = require('nodewatch');
+var WatchTree = require('watch-tree');
 var jsListDirty = true;
 var jsListText;
 var cssListDirty = true;
 var cssListText;
+var templatesDirty = true;
+var concatedTemplates;
 
 function copyFilesSync(srcFile, destFile) {
 	var BUF_LENGTH, buff, bytesRead, fdr, fdw, pos;
@@ -53,6 +56,15 @@ function generateCSSFileList(){
 	});
 	cssListDirty = false;
 }
+function generateConcatedTemplates(){
+	concatedTemplates = ""
+	var files = fs.readdirSync('../src/templates/');
+	files.forEach(function(file){
+		if (file.indexOf(".tmpl")!=-1){
+			concatedTemplates+=fs.readFileSync('../src/templates/'+file, "utf8")+"\n     ";
+		}
+    });
+}
 
 var delayedUpdateInt = NaN;
 function updateDebugIndexFile(now){
@@ -71,10 +83,14 @@ function updateDebugIndexFile(now){
 	if (cssListDirty){
 		generateCSSFileList();
 	}
+	if (templatesDirty){
+		generateConcatedTemplates();
+	}
 	
 	var indexHTML = fs.readFileSync(debugDir+'/index.html', "utf8");
 	indexHTML = indexHTML.replace("@javascript@", jsListText);
 	indexHTML = indexHTML.replace("@css@", cssListText);
+	indexHTML = indexHTML.replace("@templates@", concatedTemplates);
 	fs.writeFile(debugDir+'/index.html', indexHTML, function(err) {
 	    if(err) {
 	        console.log("error writing to index template: "+err);
@@ -114,28 +130,50 @@ exec("./create-folders.sh", function(error, stdout, stderr){
 	    cssListDirty = true;
 		updateDebugIndexFile();
 	});
+	
+	//watch changes to the templates folder and concat them into the debug index html file
+	var templateFolderWatcher = WatchTree.watchTree("../src/templates", {'sample-rate': 50, match:'\.tmpl$'});
+	templateFolderWatcher.on('fileDeleted', function(path) {
+	    console.log("deleted template " + path + "!");
+		templatesDirty = true;
+		updateDebugIndexFile();
+	
+	});
+	templateFolderWatcher.on('fileCreated', function(path) {
+	    console.log("created template " + path + "!");
+		templatesDirty = true;
+		updateDebugIndexFile();
+	});
+	templateFolderWatcher.on('fileModified', function(path) {
+	    console.log("modified template " + path + "!");
+		templatesDirty = true;
+		updateDebugIndexFile();
+	});
 
 	//watch for changes to the /src/scss directory, convert all css files over to /deploy-debug/css
-	var watcher = require('watch-tree').watchTree("../src/scss", {'sample-rate': 50, match:'\.(css|scss)$'});
-	watcher.on('fileDeleted', function(path) {
+	//TODO: verify sub folders are being synced correctly
+	var scssFolderWatcher = WatchTree.watchTree("../src/scss", {'sample-rate': 50, match:'\.(css|scss)$'});
+	scssFolderWatcher.on('fileDeleted', function(path) {
 	    console.log("deleted " + path + "!");
 		var filename = path.split("../src/scss/").join("").split(".scss").join(".css");
 		exec("rm ../deploy-debug/css/"+filename, function(error, stdout, stderr){
 			util.puts(stdout);
 		});
 	});
-	watcher.on('fileCreated', function(path) {
+	scssFolderWatcher.on('fileCreated', function(path) {
 	    console.log("created " + path + "!");
 		convertAndCopyCSS(path);
 	});
-	watcher.on('fileModified', function(path) {
+	scssFolderWatcher.on('fileModified', function(path) {
 	    console.log("modified " + path + "!");
 		convertAndCopyCSS(path);
 	});
-	watcher.on('filePreexisted', function(path) {
+	scssFolderWatcher.on('filePreexisted', function(path) {
 	    //console.log("filePreexisted " + path + "!");
 		convertAndCopyCSS(path);
 	});
+	
+	//monitor template changes and merge them into the index file
 
 	updateDebugIndexFile();
 });
