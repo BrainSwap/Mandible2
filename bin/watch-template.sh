@@ -2,12 +2,6 @@
 var args, NodeInterval, ni;
 args = process.argv.splice(2);
 NodeInterval = require('NodeInterval');
-fs = require('fs');
-var debugDir = "../deploy-debug";
-var debugDirExists = false;
-try { fs.statSync(debugDir); debugDirExists = true } 
-catch (er) { }
-if (!debugDirExists) fs.mkdirSync(debugDir, 0777)
 
 ni = new NodeInterval.Watcher({
     watchFolder: '../src/templates/',
