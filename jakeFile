@@ -1,0 +1,412 @@
+var fs = require('fs'),
+path = require('path'),
+jsp = require("./bin/node_modules/UglifyJS").parser,
+pro = require("./bin/node_modules/UglifyJS").uglify,
+NodeWatch = require('./bin/node_modules/nodewatch'),
+WatchTree = require('./bin/node_modules/watch-tree'),
+exec = require('child_process').exec,
+util = require('util'),
+isWin = !!process.platform.match(/^win/);
+
+var prodFolder = "deploy-prod";
+var debugFolder = "deploy-debug";
+var jsListDirty = true;
+//array of JS file paths parsed from src/js/list.txt
+var JS_FILES = [];
+var jsSrcListForDev;
+var cssListDirty = true;
+//array of CSS file paths parsed from src/css/list.txt
+var CSS_FILES = [];
+var cssSrcListForDev;
+var templatesDirty = true;
+var concatedTemplates;
+
+/********************/
+/* Utiliy functions */
+/********************/
+
+function parseJavascriptFileList(){
+	var jsListPath = "src/js/list.txt";
+	JS_FILES = fs.readFileSync(jsListPath, "utf8").split(/\r?\n/);
+}
+function parseCSSFileList(){
+	var cssListPath = "src/scss/list.txt";
+	CSS_FILES = fs.readFileSync(cssListPath, "utf8").split(/\r?\n/);
+}
+function generateConcatedTemplates(){
+	concatedTemplates = ""
+	var files = fs.readdirSync('src/templates/');
+	files.forEach(function(file){
+		if (file.indexOf(".tmpl")!=-1){
+			concatedTemplates+=fs.readFileSync('src/templates/'+file, "utf8")+"\n     ";
+		}
+    });
+}
+
+/* convert and copy all scss and css from src to dev */
+function convertAndCopyCSSDev(path){
+	var filename = path.split("src/scss/").join("").split(".scss").join(".css");
+	if (path.indexOf(".css")!=-1){
+		console.log("copy: "+path+" to dev /css/"+filename);
+		exec("cp "+path+" "+debugFolder+"/css/"+filename, function(error, stdout, stderr){
+			util.puts(stdout);
+		});
+	} else {
+		exec("sass --style=expanded --update "+path+":"+debugFolder+"/css/"+filename, function(error, stdout, stderr){
+			util.puts(stdout);
+		});
+	}
+}
+
+/* Concats all JS files together as one long string. Adds line breaks between files. */
+function concatJS(){
+    parseJavascriptFileList();
+    var concatFiles = [], i;
+    for (i = 0, len = JS_FILES.length; i < len; i++){
+        var file = 'src/js/'+JS_FILES[i];
+        concatFiles.push(fs.readFileSync(file, 'utf8'));
+    }
+    return concatFiles.join('\n');
+}
+
+/* Takes a string of JS and returns a compresses version of it. */
+function uglifyJS(str){
+    // parse code and get the initial AST
+    var ast = jsp.parse(str);
+    // get a new AST with mangled names
+    ast = pro.ast_mangle(ast);
+    // get an AST with compression optimizations
+    ast = pro.ast_squeeze(ast);
+    // compressed code here
+    return pro.gen_code(ast);
+}
+/* Checks if directory exists, creates if needed with optional created callback. */
+function directoryCheck(dir, callback){
+    if (!path.existsSync(dir)){
+        console.log(dir + " folder doesn't exist. Creating...");
+        fs.mkdirSync(dir);
+        if (callback){
+            callback(dir);
+        }
+    }
+}
+
+/* copy a file synchronously to a destination file.*/
+//TODO: add windows support
+function copyFileSync(srcFile, destFile) {
+	var BUF_LENGTH, buff, bytesRead, fdr, fdw, pos;
+	BUF_LENGTH = 64 * 1024;
+	buff = new Buffer(BUF_LENGTH);
+	fdr = fs.openSync(srcFile, 'r');
+	fdw = fs.openSync(destFile, 'w');
+	bytesRead = 1;
+	pos = 0;
+	while (bytesRead > 0) {
+	  bytesRead = fs.readSync(fdr, buff, 0, BUF_LENGTH, pos);
+	  fs.writeSync(fdw, buff, 0, bytesRead);
+	  pos += bytesRead;
+	}
+	fs.closeSync(fdr);
+	return fs.closeSync(fdw);
+}
+
+function removeFolder(folder){
+    folder = platformProofPath(folder);
+    if (isWin){
+        exec('rd /s /q '+folder);
+    }else{
+        //exec('rm -rf '+folder);
+        rmdirSyncRecursive(folder, true);
+    }
+}
+
+/* synchronously create sym link of */
+function createSymLink(src, dest){
+    src = platformProofPath(src);
+    dest = platformProofPath(dest);
+    if (isWin){
+        exec('mklink /D '+dest+' '+src);
+    } else {
+        fs.symlinkSync(src, dest);
+    }
+}
+
+/* correct the slashes in paths for alternate platforms */
+function platformProofPath(path){
+    if (isWin){
+        path = path.split("/").join("\\");
+    } else {
+        path = path.split("\\").join("/");
+    }
+    return path;
+}
+
+var delayedUpdateInt = NaN;
+function updateDebugIndexFile(now){
+	if (!now && isNaN(delayedUpdateInt)){
+	    //prevent recompile from being called too often
+		delayedUpdateInt = setTimeout(function(){
+			delayedUpdateInt = NaN;
+			updateDebugIndexFile(true);
+		}, 50);
+		return;
+	}
+	copyFileSync('src/index.html', debugFolder+'/index.html');
+
+	if (jsListDirty){
+		parseJavascriptFileList();
+    	jsSrcListForDev = "";
+    	JS_FILES.forEach(function (line) {
+    		jsSrcListForDev+='<script src="js/'+line+'"></script>\n      ';
+    	});
+    	jsListDirty = false;
+	}
+	if (cssListDirty){
+		parseCSSFileList();
+		cssSrcListForDev = "";
+    	JS_FILES.forEach(function (line) {
+    		cssSrcListForDev+='<link rel="stylesheet" href="css/'+line.split(".scss").join(".css")+'"/>\n        ';
+    	});
+    	cssListDirty = false;
+	}
+	if (templatesDirty){
+		generateConcatedTemplates(true);
+	}
+	
+	var indexHTML = fs.readFileSync(debugFolder+'/index.html', "utf8");
+	indexHTML = indexHTML.replace("@javascript@", jsSrcListForDev);
+	indexHTML = indexHTML.replace("@css@", cssSrcListForDev);
+	indexHTML = indexHTML.replace("@templates@", concatedTemplates);
+	fs.writeFile(debugFolder+'/index.html', indexHTML, function(err) {
+	    if(err) {
+	        console.log("error writing to index template: "+err);
+	    }
+	});
+	console.log("updated dev index.html");
+}
+
+function updateProdIndexFile(){
+    console.log("building production index.html");
+    copyFileSync('src/index.html', prodFolder+'/index.html');
+    var indexHTML = fs.readFileSync(prodFolder+'/index.html', "utf8");
+	indexHTML = indexHTML.replace("@javascript@", '<script src="js/index.js"></script>');
+	indexHTML = indexHTML.replace("@css@", '<link rel="stylesheet" href="css/index.css" />');
+	indexHTML = indexHTML.replace("@templates@", concatedTemplates);
+	fs.writeFile(prodFolder+'/index.html', indexHTML, function(err) {
+	    if(err) {
+	        console.log("error writing to index template: "+err);
+	    }
+	});
+}
+
+//from https://github.com/ryanmcgrath/wrench-js/blob/master/lib/wrench.js
+/*  wrench.copyDirSyncRecursive("directory_to_copy", "new_directory_location", opts);
+ *
+ *  Recursively dives through a directory and moves all its files to a new location. This is a
+ *  Synchronous function, which blocks things until it's done. If you need/want to do this in
+ *  an Asynchronous manner, look at wrench.copyDirRecursively() below.
+ *
+ *  Note: Directories should be passed to this function without a trailing slash.
+ */
+copyDirSyncRecursive = function(sourceDir, newDirLocation) {
+
+    /*  Create the directory where all our junk is moving to; read the mode of the source directory and mirror it */
+    var checkDir = fs.statSync(sourceDir);
+    fs.mkdirSync(newDirLocation, checkDir.mode);
+
+    var files = fs.readdirSync(sourceDir);
+
+    for(var i = 0; i < files.length; i++) {
+        var currFile = fs.statSync(sourceDir + "/" + files[i]);
+
+        if(currFile.isDirectory()) {
+            /*  Create a new directory in our copied version... */
+            fs.mkdirSync(newDirLocation + "/" + files[i], currFile.mode);
+
+            /*  ...and then recursion this thing right on back. */
+            copyDirSyncRecursive(sourceDir + "/" + files[i], newDirLocation + "/" + files[i]);
+        } else if(currFile.isSymbolicLink()) {
+            var symlinkFull = fs.readlinkSync(sourceDir + "/" + files[i]);
+            fs.symlinkSync(symlinkFull, newDirLocation + "/" + files[i]);
+        } else {
+            /*  At this point, we've hit a file actually worth copying... so copy it on over. */
+            var contents = fs.readFileSync(sourceDir + "/" + files[i]);
+            fs.writeFileSync(newDirLocation + "/" + files[i], contents);
+        }
+    }
+};
+
+//from https://github.com/ryanmcgrath/wrench-js/blob/master/lib/wrench.js
+/*  wrench.rmdirSyncRecursive("directory_path", forceDelete, failSilent);
+ *
+ *  Recursively dives through directories and obliterates everything about it. This is a
+ *  Sync-function, which blocks things until it's done. No idea why anybody would want an
+ *  Asynchronous version. :\
+ */
+rmdirSyncRecursive = function(path, failSilent) {
+    var files;
+
+    try {
+        files = fs.readdirSync(path);
+    } catch (err) {
+        if(failSilent) return;
+        throw new Error(err.message);
+    }
+
+    /*  Loop through and delete everything in the sub-tree after checking it */
+    for(var i = 0; i < files.length; i++) {
+        var currFile = fs.statSync(path + "/" + files[i]);
+
+        if(currFile.isDirectory()) // Recursive function back to the beginning
+            rmdirSyncRecursive(path + "/" + files[i]);
+
+        else if(currFile.isSymbolicLink()) // Unlink symlinks
+            fs.unlinkSync(path + "/" + files[i]);
+
+        else // Assume it's a file - perhaps a try/catch belongs here?
+            fs.unlinkSync(path + "/" + files[i]);
+    }
+
+    /*  Now that we know everything in the sub-tree has been deleted, we can delete the main
+        directory. Huzzah for the shopkeep. */
+    return fs.rmdirSync(path);
+};
+
+/********************/
+/*     Tasks    */
+/********************/
+
+desc('This is the default task which does a production build.');
+task('default', ['install-prod', 'css-prod', 'js-prod', 'templates-prod'], function(params) {
+    console.log('Done with tasks.');
+});
+
+desc('Remove dev and prod folders so you can rebuild them.');
+task('clean', [], function(params) {
+    console.log('Removing prod and dev folders...');
+    removeFolder(debugFolder);
+    removeFolder(prodFolder);
+});
+
+desc('Create prod folders and set up sym links..');
+task('install-prod', [], function(params) {
+    directoryCheck(prodFolder, function(dir){
+        fs.mkdirSync(prodFolder+'/js');
+        console.log("copying static folders");
+        copyDirSyncRecursive("src/images", prodFolder+"/images");
+        copyDirSyncRecursive("src/polyfill", prodFolder+"/pollyfill");
+    });
+    console.log('Created prod folders as needed. Run jake clean for complete rebuild.');
+});
+
+desc('Create dev and prod folders and set up sym links..');
+task('install-dev', [], function(params) {
+    directoryCheck(debugFolder, function(dir){ 
+        createSymLink("src/images", debugFolder+"/images");
+        createSymLink("src/js", debugFolder+"/js");
+        createSymLink("src/polyfill", debugFolder+"/polyfill");
+        directoryCheck(debugFolder+'/css');
+    });
+    console.log('Created dev folders as needed. Run jake clean for complete rebuild.');
+});
+
+desc('Compress all CSS into prod /css/index.css');
+task('css-prod', [], function(params) {
+    console.log('Compressed CSS for prod');
+    exec('sass --style=compressed --update src/scss:'+prodFolder+'/css', function(error, stdout, stderr){
+        if (stdout){
+            console.log(stdout);
+        }
+        if (stderr){
+            console.log('stderr: ' + stderr);
+        }
+        if (error !== null) {
+            console.log('exec error: ' + error);
+        }
+    });
+});
+
+desc('Compress all JS prod');
+task('js-prod', [], function(params) {
+    console.log('Compressing JS for prod');
+    var concatFiles = concatJS();
+    //remove console references
+    concatFiles = concatFiles.replace(/console.(log|debug|info|warn|error|assert)(.apply)?\(.*\);?/g, '');
+    var uglifyFiles = uglifyJS(concatFiles);
+    fs.writeFileSync(prodFolder+'/js/index.js', uglifyFiles, 'utf8');
+});
+
+desc('Concat templates into HTML files into prod index.html');
+task('templates-prod', [], function(params) {
+    console.log('Concating Templates for prod');
+    generateConcatedTemplates();
+    updateProdIndexFile();
+});
+
+desc('Watch src css, js, templates, and index.html for changes and update dev folder');
+task('watch-dev', ['clean', 'install-dev'], function(params) {
+    console.log('Watching source files for changes to copy to dev');
+    
+    //watch src index template for changes
+	NodeWatch.add("src/index.html").onChange(function(file,prev,curr){
+	    console.log("src index.html template changed, updating dev folder");
+		updateDebugIndexFile();
+	});
+	
+    //watch changes to javascript list file
+	NodeWatch.add("src/js/list.txt").onChange(function(file,prev,curr){
+	    console.log("javascript list changed");
+	    jsListDirty = true;
+		updateDebugIndexFile();
+	});
+
+	//watch changes to css list file
+	NodeWatch.add("src/scss/list.txt").onChange(function(file,prev,curr){
+	    console.log("css list changed");
+	    cssListDirty = true;
+		updateDebugIndexFile();
+	});
+	
+	//watch changes to the templates folder and concat them into the debug index html file
+	var templateFolderWatcher = WatchTree.watchTree("src/templates", {'sample-rate': 50, match:'\.tmpl$'});
+	templateFolderWatcher.on('fileDeleted', function(path) {
+	    console.log("deleted template " + path + "!");
+		templatesDirty = true;
+		updateDebugIndexFile();
+	
+	});
+	templateFolderWatcher.on('fileCreated', function(path) {
+	    console.log("created template " + path + "!");
+		templatesDirty = true;
+		updateDebugIndexFile();
+	});
+	templateFolderWatcher.on('fileModified', function(path) {
+	    console.log("modified template " + path + "!");
+		templatesDirty = true;
+		updateDebugIndexFile();
+	});
+
+	//watch for changes to the /src/scss directory, convert all css files over to dev css folder
+	//TODO: verify sub folders are being synced correctly
+	var scssFolderWatcher = WatchTree.watchTree("src/scss", {'sample-rate': 50, match:'\.(css|scss)$'});
+	scssFolderWatcher.on('fileDeleted', function(path) {
+	    console.log("deleted " + path + "!");
+		var filename = path.split("src/scss/").join("").split(".scss").join(".css");
+		exec("rm "+debugFolder+"/css/"+filename, function(error, stdout, stderr){
+			util.puts(stdout);
+		});
+	});
+	scssFolderWatcher.on('fileCreated', function(path) {
+	    console.log("created " + path + "!");
+		convertAndCopyCSSDev(path);
+	});
+	scssFolderWatcher.on('fileModified', function(path) {
+	    console.log("modified " + path + "!");
+		convertAndCopyCSSDev(path);
+	});
+	scssFolderWatcher.on('filePreexisted', function(path) {
+	    //console.log("filePreexisted " + path + "!");
+		convertAndCopyCSSDev(path);
+	});
+	updateDebugIndexFile();
+});
