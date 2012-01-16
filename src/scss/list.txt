@@ -1,5 +1,6 @@
-index.scss
 _html5boilerplate.scss
+skeleton/_base.scss
+skeleton/_skeleton.scss
 _base.scss
 _page-home.scss
 _ipad.scss
