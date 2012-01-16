@@ -124,10 +124,12 @@ function removeFolder(folder){
 function createSymLink(src, dest){
     src = platformProofPath(src);
     dest = platformProofPath(dest);
+    console.log("creating sym link src: "+src+" dest: "+dest);
     if (isWin){
         exec('mklink /D '+dest+' '+src);
     } else {
-        fs.symlinkSync(src, dest);
+        fs.symlinkSync(src, dest, "dir");
+        //exec('ln -s '+src+' '+dest);
     }
 }
 
@@ -164,7 +166,7 @@ function updateDebugIndexFile(now){
 	if (cssListDirty){
 		parseCSSFileList();
 		cssSrcListForDev = "";
-    	JS_FILES.forEach(function (line) {
+    	CSS_FILES.forEach(function (line) {
     		cssSrcListForDev+='<link rel="stylesheet" href="css/'+line.split(".scss").join(".css")+'"/>\n        ';
     	});
     	cssListDirty = false;
@@ -255,16 +257,19 @@ rmdirSyncRecursive = function(path, failSilent) {
 
     /*  Loop through and delete everything in the sub-tree after checking it */
     for(var i = 0; i < files.length; i++) {
-        var currFile = fs.statSync(path + "/" + files[i]);
-
-        if(currFile.isDirectory()) // Recursive function back to the beginning
+        var currFile = fs.lstatSync(path + "/" + files[i]);
+        console.log("checking: "+path + "/" + files[i]);
+        if(currFile.isDirectory()){
+            // Recursive function back to the beginning
+            console.log("curFile is dir: "+path + "/" + files[i]+" sym: "+currFile.isSymbolicLink());
             rmdirSyncRecursive(path + "/" + files[i]);
-
-        else if(currFile.isSymbolicLink()) // Unlink symlinks
+        } else if(currFile.isSymbolicLink()) {
+            // Unlink symlinks
             fs.unlinkSync(path + "/" + files[i]);
-
-        else // Assume it's a file - perhaps a try/catch belongs here?
+        } else {
+            // Assume it's a file - perhaps a try/catch belongs here?
             fs.unlinkSync(path + "/" + files[i]);
+        }
     }
 
     /*  Now that we know everything in the sub-tree has been deleted, we can delete the main
@@ -302,9 +307,9 @@ task('install-prod', [], function(params) {
 desc('Create dev and prod folders and set up sym links..');
 task('install-dev', [], function(params) {
     directoryCheck(debugFolder, function(dir){ 
-        createSymLink("src/images", debugFolder+"/images");
-        createSymLink("src/js", debugFolder+"/js");
-        createSymLink("src/polyfill", debugFolder+"/polyfill");
+        createSymLink("../src/images", debugFolder+"/images");
+        createSymLink("../src/js", debugFolder+"/js");
+        createSymLink("../src/polyfill", debugFolder+"/polyfill");
         directoryCheck(debugFolder+'/css');
     });
     console.log('Created dev folders as needed. Run jake clean for complete rebuild.');
