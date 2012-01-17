@@ -1,6 +1,6 @@
 .sass-cache/
 bin/.sass-cache/
-deploy-debug
-deploy-prod
-.DS_Store?
+deploy-debug/
+deploy-prod/
+.DS_Store
 Thumbs.db

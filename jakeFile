@@ -1,9 +1,9 @@
 var fs = require('fs'),
 path = require('path'),
-jsp = require("./bin/node_modules/UglifyJS").parser,
-pro = require("./bin/node_modules/UglifyJS").uglify,
-NodeWatch = require('./bin/node_modules/nodewatch'),
-WatchTree = require('./bin/node_modules/watch-tree'),
+jsp = require("./node_modules/uglify-js").parser,
+pro = require("./node_modules/uglify-js").uglify,
+NodeWatch = require('./node_modules/nodewatch'),
+WatchTree = require('./node_modules/watch-tree'),
 exec = require('child_process').exec,
 util = require('util'),
 isWin = !!process.platform.match(/^win/);
