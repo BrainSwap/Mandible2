@@ -14,32 +14,32 @@
 #+XSLT:
 #+Style: <style> html,body{height: 100%;} body{padding: 5px 30px; h1,h2,h3 {font-family: arial, helvetica, sans-serif} </style>
 :
-:                            _,.---,---.,_
-:                        ,;~'             '~;,
+:                            _,.-------.,_
+:                         ;~'             '~;,
 :                      ,;                     ;,
-:                     ;                         ; ,
-:                    ,'                         /'
-:                   ,;                        /' ;,
-:                   ; ;      .           .   '  ; ;
-:                  | ;   ______       ______   ; |
-:                  |  '/~"     ~" . "~     "~\'  |
-:                  |  ~  ,-~~~^~, | ,~^~~~-,  ~  |
-:                   |   |        }:{        |   |
-:                   |   l       / | \       !   |
+:                     ;                         ;
+:                    ,'                         ',
+:                   ,;                           ;,
+:                   ; ;      .           .      ; ;
+:                   | ;   ______       ______   ; |
+:                   |  `/~"     ~" . "~     "~\'  |
+:                   |  ~  ,-~~~^~, | ,~^~~~-,  ~  |
+:                    |   |        }:{        |   |
+:                    |   l       / | \       !   |
 :                    .~  (__,.--" .^. "--.,__)  ~.
-:                   |    ----;' / | \ `;----    |
+:                    |    ----;' / | \ `;----    |
 :                     \__.       \/^\/       .__/
 :                ___   V| \                 / |V
-:               |      | |T~\___!___!___/~T| |
-:               |      | |`IIII_I_I_I_IIII'| |
-:       Mandible |      |  \,III I I I III,/  |
-:               |       \   `~~~~~~~~~~'    /
-:               |         \   .       .   /
-:               |__         \.    ^    ./
+:               |       | |T~\___!___!___/~T| |
+:               |       | |`IIII_I_I_I_IIII'| |
+:   Mandible  --|       |  \,III I I I III,/  |
+:               |        \   `~~~~~~~~~~'    /
+:               |          \   .       .   /     -dcau (4/15/95)
+:               |__          \.    ^    ./
 :                              ^~~~^~~~^
 :
 * Welcome
-
+           
 Mandible2 is a build and development toolset created while developing client projects. Originally created by [[http://www.brainswap.com][BrainSwap]] for client's like [[http://www.socialgeni.us][SocialGenius]] and [[http://www.skype.com/intl/en-us/home][Skype]], it is now maintained here.
 
 * Mandible
