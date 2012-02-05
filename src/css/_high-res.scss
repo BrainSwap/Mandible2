@@ -1,0 +1,56 @@
+/* hi-res display button positions */
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+    /* fyi respond.js causes this query to be run on old IE, hence the body.touch selectors */
+    /*
+   body.touch {
+        article header h2, 
+        #blog-ticker h5, 
+        #fun-fact h5, 
+        #ticker a.prev, 
+        #ticker a.next, 
+        #slider .pagination li, 
+        #blog-ticker #ticker-left, 
+        #ticker {
+            background-image: url("../images/sprites@2x.png") !important;
+            background-size: 240px auto;
+        }
+        
+        #footer-container p {
+            background-image: url(../images/logo-footer@2x.png) !important;
+            background-size: 163px auto;
+        }
+        
+        #title {
+             background:url(../images/logo@2x.png) !important;
+        }
+        nav.sticky ul {
+          background-image: url(../images/sticky-logo@2x.png);
+          background-size: 163px auto;
+        }
+   }
+   */
+}
+
+/* mobile portrait */ 
+@media only screen and (-webkit-min-device-pixel-ratio: 2) and (max-width: 479px) {
+    /*
+    body.touch {
+        #title {
+            background: url("../images/logo-mobile@2x.png") no-repeat scroll center top transparent !important;
+            background-size: 193px auto;
+        }
+    }
+    */
+}
+
+/* mobile landscape */ 
+@media only screen and (-webkit-min-device-pixel-ratio: 2) and (min-width: 480px) and (max-width: 767px) {
+    /*
+    body.touch {
+        nav.sticky ul {
+          background-image: url(../images/brain@2x.png) !important;
+          background-size: 29px auto;
+        }
+    }
+    */
+}

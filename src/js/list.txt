@@ -1,3 +1,0 @@
-vendor/jquery.js
-vendor/underscore.js
-index.js

@@ -1,6 +1,6 @@
-#+TITLE:     Mandible: BrainSwap's web application tool
-#+AUTHOR:    Mauvis Ledford
-#+EMAIL:     mauvis@brainswap.me
+#+TITLE:     Mandible: BrainSwap's web application build and development toolset
+#+AUTHOR:    Mauvis Ledford, Mark Ledford
+#+EMAIL:     hello@brainswap.me
 #+DATE:      2011-09-22 Thu
 #+DESCRIPTION:
 #+OPTIONS: ^:{} num:nil
@@ -40,7 +40,7 @@
 :
 * Welcome
            
-Mandible2 is a build and development toolset created while developing client projects. Originally created by [[http://www.brainswap.com][BrainSwap]] for client's like [[http://www.socialgeni.us][SocialGenius]] and [[http://www.skype.com/intl/en-us/home][Skype]], it is now maintained here.
+Mandible2 is a text editor agnostic HTML5/CSS3/Javascript web application development toolset + project base developed by [[http://www.brainswap.com][BrainSwap]] while working for client's like [[http://www.socialgeni.us][SocialGenius]] and [[http://www.skype.com/intl/en-us/home][Skype]], it is now maintained here.
 
 * Mandible
 - is a collection of open-source and custom tools for organizing and prepping a web app for production.

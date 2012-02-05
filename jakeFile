@@ -10,28 +10,48 @@ isWin = !!process.platform.match(/^win/);
 
 var prodFolder = "deploy-prod";
 var debugFolder = "deploy-debug";
+
 var jsListDirty = true;
-//array of JS file paths parsed from src/js/list.txt
+//array of JS file paths parsed from src/index.html between @js concat start@ and @js concat end@
 var JS_FILES = [];
-var jsSrcListForDev;
+var jsStartMarker = "@javascript concat start@";
+var jsEndMarker = "@javascript concat end@";
+
 var cssListDirty = true;
-//array of CSS file paths parsed from src/css/list.txt
+//array of CSS file paths parsed from src/index.html between @css concat start@ and @css concat end@
 var CSS_FILES = [];
-var cssSrcListForDev;
 var templatesDirty = true;
 var concatedTemplates;
+var cssStartMarker = "@css concat start@";
+var cssEndMarker = "@css concat end@";
 
 /********************/
 /* Utiliy functions */
 /********************/
 
 function parseJavascriptFileList(){
-	var jsListPath = "src/js/list.txt";
-	JS_FILES = fs.readFileSync(jsListPath, "utf8").split(/\r?\n/);
+    //generate css list
+	var templateText = /@javascript concat start@([\s\S]*?)@javascript concat end@/.exec( fs.readFileSync("src/index.html", "utf8") )[1];
+	//parse out comments to catch any tags that are commented out
+	templateText = templateText.replace(/<!--([\s\S]*?)-->/g, "");
+	JS_FILES = []; 
+	var matches = templateText.match(/src="([\s\S]*?)"/g);
+	for (var i = 0; i<matches.length; i++){
+	    //ugly but works for now since i can't easily get the capture group
+	    JS_FILES.push(matches[i].split("\"")[1]);
+	}
 }
 function parseCSSFileList(){
-	var cssListPath = "src/scss/list.txt";
-	CSS_FILES = fs.readFileSync(cssListPath, "utf8").split(/\r?\n/);
+    //generate css list
+	var templateText = /@css concat start@([\s\S]*?)@css concat end@/.exec( fs.readFileSync("src/index.html", "utf8") )[1];
+	//parse out comments to catch any tags that are commented out
+	templateText = templateText.replace(/<!--([\s\S]*?)-->/g, "");
+	CSS_FILES = []; 
+	var matches = templateText.match(/href="([\s\S]*?)"/g);
+	for (var i = 0; i<matches.length; i++){
+	    //ugly but works for now since i can't easily get the capture group
+	    CSS_FILES.push(matches[i].split("\"")[1]);
+	}
 }
 function generateConcatedTemplates(){
 	concatedTemplates = ""
@@ -45,7 +65,7 @@ function generateConcatedTemplates(){
 
 /* convert and copy all scss and css from src to dev */
 function convertAndCopyCSSDev(path){
-	var filename = path.split("src/scss/").join("").split(".scss").join(".css");
+	var filename = path.split("src/css/").join("").split(".scss").join(".css");
 	if (path.indexOf(".css")!=-1){
 		console.log("copy: "+path+" to dev /css/"+filename);
 		exec("cp "+path+" "+debugFolder+"/css/"+filename, function(error, stdout, stderr){
@@ -63,7 +83,7 @@ function concatJS(){
     parseJavascriptFileList();
     var concatFiles = [], i;
     for (i = 0, len = JS_FILES.length; i < len; i++){
-        var file = 'src/js/'+JS_FILES[i];
+        var file = 'src/'+JS_FILES[i];
         concatFiles.push(fs.readFileSync(file, 'utf8'));
     }
     return concatFiles.join('\n');
@@ -154,30 +174,15 @@ function updateDebugIndexFile(now){
 		return;
 	}
 	copyFileSync('src/index.html', debugFolder+'/index.html');
-
-	if (jsListDirty){
-		parseJavascriptFileList();
-    	jsSrcListForDev = "";
-    	JS_FILES.forEach(function (line) {
-    		jsSrcListForDev+='<script src="js/'+line+'"></script>\n      ';
-    	});
-    	jsListDirty = false;
-	}
-	if (cssListDirty){
-		parseCSSFileList();
-		cssSrcListForDev = "";
-    	CSS_FILES.forEach(function (line) {
-    		cssSrcListForDev+='<link rel="stylesheet" href="css/'+line.split(".scss").join(".css")+'"/>\n        ';
-    	});
-    	cssListDirty = false;
-	}
 	if (templatesDirty){
 		generateConcatedTemplates(true);
 	}
-	
 	var indexHTML = fs.readFileSync(debugFolder+'/index.html', "utf8");
-	indexHTML = indexHTML.replace("@javascript@", jsSrcListForDev);
-	indexHTML = indexHTML.replace("@css@", cssSrcListForDev);
+	indexHTML = indexHTML.replace(jsStartMarker, "");
+	indexHTML = indexHTML.replace(jsEndMarker, "");
+	indexHTML = indexHTML.replace(cssStartMarker, "");
+	indexHTML = indexHTML.replace(cssEndMarker, "");
+	indexHTML = indexHTML.split("scss\"").join("css\"");
 	indexHTML = indexHTML.replace("@templates@", concatedTemplates);
 	fs.writeFile(debugFolder+'/index.html', indexHTML, function(err) {
 	    if(err) {
@@ -191,8 +196,8 @@ function updateProdIndexFile(){
     console.log("building production index.html");
     copyFileSync('src/index.html', prodFolder+'/index.html');
     var indexHTML = fs.readFileSync(prodFolder+'/index.html', "utf8");
-	indexHTML = indexHTML.replace("@javascript@", '<script src="js/index.js"></script>');
-	indexHTML = indexHTML.replace("@css@", '<link rel="stylesheet" href="css/index.css" />');
+	indexHTML = indexHTML.replace(/@javascript concat start@([\s\S]*?)@javascript concat end@/, '<script src="js/index.js"></script>');
+	indexHTML = indexHTML.replace(/@css concat start@([\s\S]*?)@css concat end@/, '<link rel="stylesheet" href="css/index.css" />');
 	indexHTML = indexHTML.replace("@templates@", concatedTemplates);
 	fs.writeFile(prodFolder+'/index.html', indexHTML, function(err) {
 	    if(err) {
@@ -219,12 +224,9 @@ copyDirSyncRecursive = function(sourceDir, newDirLocation) {
     var files = fs.readdirSync(sourceDir);
 
     for(var i = 0; i < files.length; i++) {
-        var currFile = fs.statSync(sourceDir + "/" + files[i]);
+        var currFile = fs.lstatSync(sourceDir + "/" + files[i]);
 
         if(currFile.isDirectory()) {
-            /*  Create a new directory in our copied version... */
-            fs.mkdirSync(newDirLocation + "/" + files[i], currFile.mode);
-
             /*  ...and then recursion this thing right on back. */
             copyDirSyncRecursive(sourceDir + "/" + files[i], newDirLocation + "/" + files[i]);
         } else if(currFile.isSymbolicLink()) {
@@ -286,20 +288,27 @@ task('default', ['install-prod', 'css-prod', 'js-prod', 'templates-prod'], funct
     console.log('Done with tasks.');
 });
 
-desc('Remove dev and prod folders so you can rebuild them.');
-task('clean', [], function(params) {
-    console.log('Removing prod and dev folders...');
-    removeFolder(debugFolder);
+desc('Remove prod folder so you can rebuild it.');
+task('clean-prod', [], function(params) {
+    console.log('Removing prod folder...');
     removeFolder(prodFolder);
 });
+
+desc('Remove dev folder so you can rebuild it.');
+task('clean-dev', [], function(params) {
+    console.log('Removing dev folder...');
+    removeFolder(debugFolder);
+});
+
 
 desc('Create prod folders and set up sym links..');
 task('install-prod', [], function(params) {
     directoryCheck(prodFolder, function(dir){
         fs.mkdirSync(prodFolder+'/js');
+         fs.mkdirSync(prodFolder+'/css');
         console.log("copying static folders");
         copyDirSyncRecursive("src/images", prodFolder+"/images");
-        copyDirSyncRecursive("src/polyfill", prodFolder+"/pollyfill");
+        copyDirSyncRecursive("src/polyfill", prodFolder+"/polyfill");
     });
     console.log('Created prod folders as needed. Run jake clean for complete rebuild.');
 });
@@ -318,7 +327,14 @@ task('install-dev', [], function(params) {
 desc('Compress all CSS into prod /css/index.css');
 task('css-prod', [], function(params) {
     console.log('Compressed CSS for prod');
-    exec('sass --style=compressed --update src/scss:'+prodFolder+'/css', function(error, stdout, stderr){
+    //combine all css into a single scss index file
+    parseCSSFileList();
+    var command = "cat ";
+    for (i = 0, len = CSS_FILES.length; i < len; i++){
+        command+='src/'+CSS_FILES[i]+" ";
+    }
+    command+="| sass --style=compressed --scss > "+prodFolder+"/css/index.css";
+    exec(command, function(error, stdout, stderr){
         if (stdout){
             console.log(stdout);
         }
@@ -349,26 +365,12 @@ task('templates-prod', [], function(params) {
 });
 
 desc('Watch src css, js, templates, and index.html for changes and update dev folder');
-task('watch-dev', ['clean', 'install-dev'], function(params) {
+task('watch-dev', ['clean-dev', 'install-dev'], function(params) {
     console.log('Watching source files for changes to copy to dev');
     
     //watch src index template for changes
 	NodeWatch.add("src/index.html").onChange(function(file,prev,curr){
 	    console.log("src index.html template changed, updating dev folder");
-		updateDebugIndexFile();
-	});
-	
-    //watch changes to javascript list file
-	NodeWatch.add("src/js/list.txt").onChange(function(file,prev,curr){
-	    console.log("javascript list changed");
-	    jsListDirty = true;
-		updateDebugIndexFile();
-	});
-
-	//watch changes to css list file
-	NodeWatch.add("src/scss/list.txt").onChange(function(file,prev,curr){
-	    console.log("css list changed");
-	    cssListDirty = true;
 		updateDebugIndexFile();
 	});
 	
@@ -391,12 +393,12 @@ task('watch-dev', ['clean', 'install-dev'], function(params) {
 		updateDebugIndexFile();
 	});
 
-	//watch for changes to the /src/scss directory, convert all css files over to dev css folder
+	//watch for changes to the /src/css directory, convert all css files over to dev css folder
 	//TODO: verify sub folders are being synced correctly
-	var scssFolderWatcher = WatchTree.watchTree("src/scss", {'sample-rate': 50, match:'\.(css|scss)$'});
+	var scssFolderWatcher = WatchTree.watchTree("src/css", {'sample-rate': 50, match:'\.(css|scss)$'});
 	scssFolderWatcher.on('fileDeleted', function(path) {
 	    console.log("deleted " + path + "!");
-		var filename = path.split("src/scss/").join("").split(".scss").join(".css");
+		var filename = path.split("src/css/").join("").split(".scss").join(".css");
 		exec("rm "+debugFolder+"/css/"+filename, function(error, stdout, stderr){
 			util.puts(stdout);
 		});
@@ -414,4 +416,18 @@ task('watch-dev', ['clean', 'install-dev'], function(params) {
 		convertAndCopyCSSDev(path);
 	});
 	updateDebugIndexFile();
+});
+
+desc('deploy to staging environment');
+task('deploy-staging', [], function(params) {
+    console.log('Deploying to staging server');
+    var cmd = 'rsync -arz --progress --delete --exclude=".DS_Store" deploy-prod/ HOST:/PATH/';
+    exec(cmd, function(error, stdout, stderr){
+		util.puts(stdout);
+	});
+});
+
+desc('deploy to prod environment');
+task('deploy-prod', [], function(params) {
+    console.log('Deploying to prod server');
 });

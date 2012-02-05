@@ -32,7 +32,23 @@
         <meta property="og:image" content=""/>
         -->
         <!-- Concatinated CSS files. -->
-        @css@
+        @css concat start@
+        <!-- Detailed information: h5bp.com/css -->
+        <link rel="stylesheet" href="css/_html5boilerplate.scss"/>
+        <!-- Base Skeleton files, override don't touch. -->
+        <link rel="stylesheet" href="css/skeleton/_base.scss"/>
+        <link rel="stylesheet" href="css/skeleton/_skeleton.scss"/>
+        <!-- Main CSS file. -->
+        <link rel="stylesheet" href="css/_base.scss"/>
+        <!-- Page specific. -->
+        <!-- Feature specific. -->
+        <!-- Device specific. -->
+        <!-- Dimension specific. -->
+        <link rel="stylesheet" href="css/_mobile-landscape.scss"/>
+        <link rel="stylesheet" href="css/_mobile-portrait.scss"/>
+        <link rel="stylesheet" href="css/_tablet-portrait.scss"/>
+        <link rel="stylesheet" href="css/_high-res.scss"/>
+        @css concat end@
         <title>Sample page</title>
         <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
         <script src="polyfill/modernizr-custom.js"></script>
@@ -47,7 +63,11 @@
       <!-- Section templates -->
       @templates@
 
-      <!-- Concatinated JS files. -->
-	  @javascript@
+      <!-- Concatinated JS files. --> 
+      @javascript concat start@
+      <script src="js/vendor/jquery.js"></script>
+      <script src="js/vendor/underscore.js"></script>
+      <script src="js/index.js"></script>
+      @javascript concat end@
     </body>
 </html>
