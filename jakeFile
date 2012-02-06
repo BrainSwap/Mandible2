@@ -118,6 +118,12 @@ function copyFileSync(srcFile, destFile) {
 	BUF_LENGTH = 64 * 1024;
 	buff = new Buffer(BUF_LENGTH);
 	fdr = fs.openSync(srcFile, 'r');
+	var lastChar = destFile.charAt(destFile.length-1);
+	if (lastChar=="/"){
+	    var fileName = srcFile.split("/");
+	    fileName = fileName[fileName.length-1];
+	    destFile = destFile+fileName;
+	}
 	fdw = fs.openSync(destFile, 'w');
 	bytesRead = 1;
 	pos = 0;
@@ -314,6 +320,13 @@ task('install-prod', [], function(params) {
         console.log("copying static folders");
         copyDirSyncRecursive("src/images", prodFolder+"/images");
         copyDirSyncRecursive("src/polyfill", prodFolder+"/polyfill");
+        copyFileSync('src/apple-touch-icon-57x57-precomposed.png', prodFolder+'/');
+    	copyFileSync('src/apple-touch-icon-72x72-precomposed.png', prodFolder+'/');
+    	copyFileSync('src/apple-touch-icon-114x114-precomposed.png', prodFolder+'/');
+    	copyFileSync('src/apple-touch-icon-precomposed.png', prodFolder+'/');
+    	copyFileSync('src/apple-touch-icon.png', prodFolder+'/');
+    	copyFileSync('src/favicon.ico', prodFolder+'/');
+    	copyFileSync('src/robots.txt', prodFolder+'/');
     });
     console.log('Created prod folders as needed. Run jake clean for complete rebuild.');
 });
@@ -325,6 +338,13 @@ task('install-dev', [], function(params) {
         createSymLink("../src/js", debugFolder+"/js");
         createSymLink("../src/polyfill", debugFolder+"/polyfill");
         directoryCheck(debugFolder+'/css');
+        copyFileSync('src/apple-touch-icon-57x57-precomposed.png', debugFolder+'/');
+    	copyFileSync('src/apple-touch-icon-72x72-precomposed.png', debugFolder+'/');
+    	copyFileSync('src/apple-touch-icon-114x114-precomposed.png', debugFolder+'/');
+    	copyFileSync('src/apple-touch-icon-precomposed.png', debugFolder+'/');
+    	copyFileSync('src/apple-touch-icon.png', debugFolder+'/');
+    	copyFileSync('src/favicon.ico', debugFolder+'/');
+    	copyFileSync('src/robots.txt', debugFolder+'/');
     });
     console.log('Created dev folders as needed. Run jake clean for complete rebuild.');
 });
@@ -377,6 +397,29 @@ task('watch-dev', ['clean-dev', 'install-dev'], function(params) {
 	NodeWatch.add("src/index.html").onChange(function(file,prev,curr){
 	    console.log("src index.html template changed, updating dev folder");
 		updateDebugIndexFile();
+	});
+	
+	//watch root icons for changes
+	NodeWatch.add("src/apple-touch-icon-57x57-precomposed.png").onChange(function(file,prev,curr){
+	    copyFileSync(file, debugFolder+'/');
+	});
+	NodeWatch.add("src/apple-touch-icon-72x72-precomposed.png").onChange(function(file,prev,curr){
+	    copyFileSync(file, debugFolder+'/');
+	});
+	NodeWatch.add("src/apple-touch-icon-114x114-precomposed.png").onChange(function(file,prev,curr){
+	    copyFileSync(file, debugFolder+'/');
+	});
+	NodeWatch.add("src/apple-touch-icon-precomposed.png").onChange(function(file,prev,curr){
+	    copyFileSync(file, debugFolder+'/');
+	});
+	NodeWatch.add("src/apple-touch-icon.png").onChange(function(file,prev,curr){
+	    copyFileSync(file, debugFolder+'/');
+	});
+	NodeWatch.add("src/favicon.ico").onChange(function(file,prev,curr){
+	    copyFileSync(file, debugFolder+'/');
+	});
+	NodeWatch.add("src/robots.txt").onChange(function(file,prev,curr){
+	    copyFileSync(file, debugFolder+'/');
 	});
 	
 	//watch changes to the templates folder and concat them into the debug index html file
