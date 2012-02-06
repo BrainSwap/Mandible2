@@ -283,8 +283,13 @@ rmdirSyncRecursive = function(path, failSilent) {
 /*     Tasks    */
 /********************/
 
-desc('This is the default task which does a production build.');
-task('default', ['install-prod', 'css-prod', 'js-prod', 'templates-prod'], function(params) {
+desc('This is the default task which starts the dev watch script.');
+task('default', ['watch-dev'], function(params) {
+    console.log('Done with tasks.');
+});
+
+desc('Does a production build.');
+task('build-prod', ['install-prod', 'css-prod', 'js-prod', 'templates-prod'], function(params) {
     console.log('Done with tasks.');
 });
 

@@ -1,4 +1,4 @@
-#+TITLE:     Mandible: BrainSwap's web application build and development toolset
+#+TITLE:     Mandible: BrainSwap's web application build and development toolset + project template
 #+AUTHOR:    Mauvis Ledford, Mark Ledford
 #+EMAIL:     hello@brainswap.me
 #+DATE:      2011-09-22 Thu
@@ -40,75 +40,45 @@
 :
 * Welcome
            
-Mandible2 is a text editor agnostic HTML5/CSS3/Javascript web application development toolset + project base developed by [[http://www.brainswap.com][BrainSwap]] while working for client's like [[http://www.socialgeni.us][SocialGenius]] and [[http://www.skype.com/intl/en-us/home][Skype]], it is now maintained here.
+Mandible2 is a text editor agnostic HTML5/CSS3/Javascript web application development toolset + project template developed by [[http://www.brainswap.com][BrainSwap]] while working for client's like [[http://www.socialgeni.us][SocialGenius]] and [[http://www.skype.com/intl/en-us/home][Skype]], it is now maintained here.
+Utilizing an ecosystem of well-supported libraries and technologies Mandible provides structure, consistency, and a framework of standardized solutions to development pitfalls and web technology issues when dealing with developing and deploying javascript heavy web apps and mobile friendly web sites.
 
-* Mandible
-- is a collection of open-source and custom tools for organizing and prepping a web app for production.
-- includes a copy of [[http://getskeleton.com/][Skeleton]], and dimension specific CSS files to get you started with a [[http://www.alistapart.com/articles/responsive-web-design/][responsive]] design.
-- makes your app mobile-ready from the start with the right HTML meta and CSS (taken from [[http://html5boilerplate.com/mobile][HTML5 boilerplate]]).
-- gives your web app a (customizable) folder structure for development and production.
-- concatinates and minifies your CSS and JS files.
-- Comes with [[http://documentcloud.github.com/underscore/#template][Underscore]] for JavaScript templating.
-- allows you to create your own folder hierarchy of JavaScript templates.
-- automatially creates and maintains production assets (css, js, templates).
-- can watch for CSS and template changes and concat them on the fly.
-- Includes a makeFile for concating JS, CSS, and concating templates in one easy step.
-- detects for IE and includes [[http://remysharp.com/2010/10/08/what-is-a-polyfill/][polyfills]] like [[https://github.com/scottjehl/Respond][respond.js]] for parity in IE.
-
-Mandible is targetted toward web apps built on JavaScript MVC frameworks (we love [[http://documentcloud.github.com/backbone/][Backbone]]).
-* Mandible works by
-- compressing and minifying your CSS with [[http://sass-lang.com/][Sass]].
-- compresses and minifying your JS with [[https://github.com/mishoo/UglifyJS][UglifyJS]].
-- externalizing your JavaScript templates and watching for changes with [[https://github.com/krunkosaurus/NodeInterval][NodeInterval]].
+* Mandible includes
+- a cross-browser normalized HTML5 and CSS3 ready project base utilizing [[http://html5boilerplate.com/][HTML5 boilerplate]] which includes [[http://http://www.modernizr.com/][Modernizr]]'s conditional [[https://github.com/Modernizr/Modernizr/wiki/HTML5-Cross-browser-Polyfills][HTML5 polyfill]] loader and the [[https://github.com/scottjehl/Respond][Respond.js]] polyfill for CSS3 Media Query support in older browsers among other gems.
+- the [[http://getskeleton.com/][Skeleton]] CSS development kit including a version of the 960 grid system and a set of optimized CSS3 Media Query based style sheets that best target device sizes and orientations for a [[http://www.alistapart.com/articles/responsive-web-design/][responsive]] design.
+- the [[http://sass-lang.com/][Sass]] CSS3 extension which adds nested rules, variables, mixins, selector inheritance for faster, more efficient CSS coding on the development side while translating into well-formatted, standard CSS on the deployment side.
+- a standardized source, debug deployment, and production deployment project structure including a customizable [[http://nodejs.org/][Node.Js]] watch and deployment [[http://howtonode.org/intro-to-jake][jakeFile]] that automatically concatenates and minifies your CSS and JS files for production builds. We recomment using [[https://github.com/][Git]] for code version control and include a .gitignore in the root project folder so debug and production deployment folders are never checked in.
+- the most popular and robust Javascript libraries for application architecture ([[http://documentcloud.github.com/backbone/][Backbone.js]]), view templating ([[http://documentcloud.github.com/underscore/#template][Underscore]]), and day-to-day coding ([[http://jquery.com/][jQuery]])
 
 * Requirements
   To use this tools you need to have the following installed:
 - You need to install Ruby (already installed on all macs).
 - You need to install [[http://sass-lang.com/][Sass]]. =sudo gem install sass=
-- You need to instal [[http://nodejs.org/][Node]]. (Compile it from [[http://nodejs.org/#download][here]].)
+- You need to install [[http://nodejs.org/][Node]]. (Compile it from [[http://nodejs.org/#download][here]].)
 Note: Compressed assets are not included in this repo. To see the sample code you must run "make" in the root folder at least once. (Which require you have the above installed.)
+- You need to install [[http://howtonode.org/intro-to-jake][Jake]].
 * To use
-** For developers:
-1. In terminal, run the two shell scripts in =/bin=. Keep them open while you do your development and all your CSS and templates changes are automatically merged into the production ready files.
-2. While working, view your changes in =/dev/index.html=
-3. When you're done for the day, compress your JavaScript files by typing =make= in the root project folder. In case your bin scripts are off, this will also automatically compress all CSS, JS, and rerender the templates - but only when necessary.
-4. Verify the production file at =/prod/index.html=.
-** For build managers:
-1. Simply type =make -B= to force all CSS, JS, and templates processes to run. Push to production box(es) and / or CDN.
+1. In terminal, run the jakeFile watch script which is the default target. Just type "jake" in the project folder and keep this window open while you work. 
+2. Edit the html template under /src/. Any CSS or JS additions should be added to their respective folders under /src/ and added to the index.html file between the
+=@css concat start@= and =@css concat end@= markers for CSS and =@javascript concat start@= and =@javascript concat end@= for javascript that should be auto concatenated. New templates added to the /src/templates/ folder will automatically be added to the generated index.html file in the deployment folders.
+3. While working, view your changes via refreshing the generated index.html file in the =/deploy-debug/= debug deployment folder in your web browser.
+4. When you want to generate a production ready version of the deployment folder, in a new Terminal tab type =jake build-prod=. Run =jake clean-prod= to remove previous generated code before the build. The production deployment folder will be generated as =/deploy-prod/= and contain minified and concatenated Javascript in =/deploy-prod/src/js/index.js= and CSS in =/deploy-prod/src/css/index.css=. We recommend utilizing the "deploy-staging" and =deploy-prod= stub tasks to execute copying deployment folders to staging and production environments.
 
 * Explanation of application architecture
 : .
-: ├── /prod                          <-- "Production" folder container html and compressed assets.
+: ├── /deploy-prod                   <-- "Production" folder containing html and compressed assets. Generated with the "jake build-prod" task. The contents of this folder is what is deployed to production environments and includes all static assets. 
 : │   └── index.html                 <-- The production-ready file you want to view to launch this webapp.
-: ├── /dev                           <-- "Development" folder container html and uncompressed assets.
-: │   └── index.html                 <-- The uncompressed js prod version with concatinated js templates, use this during daily development.
-: ├── /src                           <-- "Template" files
-: │   ├── index.html                 <-- Prod file without templates. Just used to generate real prod file. Never use it.
-: │   ├── index_uncompressed.html    <-- Dev index file with raw js. Do your development here.
-: │   └── /templates                 <-- Folder of JavaScript templates, anytime any of these are edited dev and prod pages get automatically updated.
-: ├── /bin                           <-- Dev shell scripts.
-: │   ├── sass-watch.sh              <-- Run this in another terminal tab to watch for css changes. It will automatically concat and minify to assets/css
-: │   └── template-watch.sh          <-- Run this in another terminal tab to watch for template changes. All templates get concatinated into assets/*.html files.
-: ├── /vendor                        <-- Open-source shell scripts referenced by /bin scripts.
-: └── makefile                       <-- make utility for concatinating and minifying all js (and css and templates) to assets folder.
+: ├── /deploy-debug                  <-- "Development" folder containing and uncompressed and optimized-for-debugging version of your deployment folder.
+: │   └── index.html                 <-- The generated uncompressed version of the html file to use during daily development.
+: ├── /src                           <-- Source files used to generate the deploy-debug and deploy-prod folders
+: │   ├── index.html                 <-- index.html template used to generate the debug and prod versions. Include CSS and JS concat lists between respective markers.
+: │   └── /templates                 <-- Folder of JavaScript view templates, automatically integrated into debug and prod index.html file via jake tasks.
+: │   └── /css                       <-- Folder of CSS files. Add new files to the index.html file between the @css concat@ markers. They will be linked directly in debug deployment folder and minified and concatenated in the production folder.
+: │   └── /js                        <-- Folder of JS files. Add new files to the index.html file between the @javascript concat@ markers. They will be linked directly in debug deployment folder and minified and concatenated in the production folder.
+: │   └── /images                    <-- Folder for static assets. Static asset folders are symlinked in the deploy-debug folder and copied as is to the prod folder.
+: │   └── /polyfill                  <-- Folder for javascript polyfills. Static folder treated similarly to the /images/ folder. Integrate polyfills in your index.html template using Modernizr.
+: └── jakeFile                       <-- node.js equivalent of makeFile. All build and concat watching tasks are defined and run from here.
 
 * Additional tips
-- You should probably put production ready folders =prod/js= and =prod/js= under =.gitignore= so they aren't comitted to your repository (this is done for you.)
-- If you want just the SASS bits steal just the sass script in =/bin/watch-css.sh= and =src/scss/index.scss=.
-- If you want just the js compression features Steal the =makeFile= and the =vendor= folder.
-- If you want just the template concat / watch features clone [[https://github.com/krunkosaurus/NodeInterval][NodeInterval]].
-- We use  [[http://html5boilerplate.com/mobile][HTML Mobile Boilerplate]]. Read up on it for lots of good tidbits like the ellipsis class.
-- We recommend [[http://css3pie.com/][CSSPie]] for advance CSS3 support in IE.
-- We'll probably be open-sourcing our Backbone layer that fits on top of this in the future.
-* Projects we use and recommend:
-- [[http://documentcloud.github.com/backbone/][backbone.js]] - MVC JavaScript framework that utilizes [[http://jquery.com/][jQuery]] and
-  [[http://documentcloud.github.com/underscore/][underscore.js]].
-  Underscore's templating ability is especially useful.
-- [[http://getskeleton.com/][Skeleton]] - Grid-based CSS layout system to allow content to reflow to various
-  browser widths.
-- [[https://developers.facebook.com/docs/reference/javascript/][Facebook JavaScript SDK]] - The JavaScript SDK provides a rich set of
-  client-side functionality for accessing Facebook's server-side API calls.
-- [[http://www.schillmania.com/projects/soundmanager2/][Soundmanager 2]] - Cross-browser audio support.
-- [[http://cubiq.org/iscroll-4][iScroll 4]] - JS lib for native scrolling ability in subsections.
-- [[http://sass-lang.com/][Sass]] - Ruby Gem for organizing and minifying CSS.
-- [[https://github.com/krunkosaurus/NodeInterval][Node Interval]] - Node utility for managing and concatenating template files.
+- Generated debug and production folders =deploy-debug= and =deploy-prod= are added to =.gitignore= so they aren't committed to your repository. If using a CVS other then GIT, make sure these folders are not checked in to your CVS. 
+- There is a plethora of great libraries and utilities included with Mandible2. Its strongly recommended that you read up on each to best utilize the potential of each and to make sure they are working with you not against you. 

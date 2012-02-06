@@ -4,11 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 lang="en" xml:lang="en">
 <head>
-<title>Mandible: BrainSwap's web application tool</title>
+<title>Mandible2: BrainSwap's web application build and development toolset + project template</title>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="generator" content="Org-mode"/>
 <meta name="generated" content="2011-09-22 Thu"/>
-<meta name="author" content="Mauvis Ledford"/>
+<meta name="author" content="Mauvis Ledford, Mark Ledford"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
 <style type="text/css">
@@ -85,29 +85,29 @@ lang="en" xml:lang="en">
 <h1 class="title">Mandible: BrainSwap's web application tool</h1>
 <pre class="example">
 
-                           _,.---,---.,_
-                       ,;~'             '~;,
-                     ,;                     ;,
-                    ;                         ; ,
-                   ,'                         /'
-                  ,;                        /' ;,
-                  ; ;      .           .   '  ; ;
-                 | ;   ______       ______   ; |
-                 |  '/~"     ~" . "~     "~\'  |
-                 |  ~  ,-~~~^~, | ,~^~~~-,  ~  |
-                  |   |        }:{        |   |
-                  |   l       / | \       !   |
-                   .~  (__,.--" .^. "--.,__)  ~.
-                  |    ----;' / | \ `;----    |
-                    \__.       \/^\/       .__/
-               ___   V| \                 / |V
-              |      | |T~\___!___!___/~T| |
-              |      | |`IIII_I_I_I_IIII'| |
-      Mandible |      |  \,III I I I III,/  |
-              |       \   `~~~~~~~~~~'    /
-              |         \   .       .   /
-              |__         \.    ^    ./
-                             ^~~~^~~~^
+                            _,.-------.,_
+                         ;~'             '~;,
+                      ,;                     ;,
+                     ;                         ;
+                    ,'                         ',
+                   ,;                           ;,
+                   ; ;      .           .      ; ;
+                   | ;   ______       ______   ; |
+                   |  `/~"     ~" . "~     "~\'  |
+                   |  ~  ,-~~~^~, | ,~^~~~-,  ~  |
+                    |   |        }:{        |   |
+                    |   l       / | \       !   |
+                    .~  (__,.--" .^. "--.,__)  ~.
+                    |    ----;' / | \ `;----    |
+                     \__.       \/^\/       .__/
+                ___   V| \                 / |V
+               |       | |T~\___!___!___/~T| |
+               |       | |`IIII_I_I_I_IIII'| |
+   Mandible  --|       |  \,III I I I III,/  |
+               |        \   `~~~~~~~~~~'    /
+               |          \   .       .   /     -dcau (4/15/95)
+               |__          \.    ^    ./
+                              ^~~~^~~~^
 
 </pre>
 
@@ -139,62 +139,28 @@ lang="en" xml:lang="en">
 
 
 <p>
-Mandible2 is a build and development toolset created while developing client projects. Originally created by <a href="http://www.brainswap.com">BrainSwap</a> for client's like <a href="http://www.socialgeni.us">SocialGenius</a> and <a href="http://www.skype.com/intl/en-us/home">Skype</a>, it is now maintained here.
+Mandible2 is a text editor agnostic HTML5/CSS3/Javascript web application development toolset + project template developed by <a href="http://www.brainswap.com">BrainSwap</a> while working for client's like <a href="http://www.socialgeni.us">SocialGenius</a> and <a href="http://www.skype.com/intl/en-us/home">Skype</a>, it is now maintained here. Utilizing an ecosystem of well-supported libraries and technologies Mandible provides structure, consistency, and a framework of standardized solutions to development pitfalls and web technology issues when dealing with developing and deploying modern html based web apps and javascript heavy, mobile friendly web sites.
 </p>
 </div>
 
 </div>
 
 <div id="outline-container-2" class="outline-2">
-<h2 id="sec-2">Mandible </h2>
+<h2 id="sec-2">Mandible includes</h2>
 <div class="outline-text-2" id="text-2">
 
 <ul>
-<li>is a collection of open-source and custom tools for organizing and prepping a web app for production.
+<li>a cross-browser normalized HTML5 and CSS3 ready project base utilizing <a href="http://html5boilerplate.com/">HTML5 boilerplate</a> which includes <a href="http://http://www.modernizr.com/">Modernizr</a>'s conditional <a href="https://github.com/Modernizr/Modernizr/wiki/HTML5-Cross-browser-Polyfills">HTML5 polyfill</a> loader and the <a href="https://github.com/scottjehl/Respond">Respond.js</a> polyfill for CSS3 Media Query support in older browsers among other gems.
 </li>
-<li>includes a copy of <a href="http://getskeleton.com/">Skeleton</a>, and dimension specific CSS files to get you started with a <a href="http://www.alistapart.com/articles/responsive-web-design/">responsive</a> design.
+<li>the <a href="http://getskeleton.com/">Skeleton</a> CSS development kit including a version of the 960 grid system and a set of optimized CSS3 Media Query based style sheets that best target device sizes and orientations for a <a href="http://www.alistapart.com/articles/responsive-web-design/">responsive</a> design.
 </li>
-<li>makes your app mobile-ready from the start with the right HTML meta and CSS (taken from <a href="http://html5boilerplate.com/mobile">HTML5 boilerplate</a>).
+<li>the <a href="http://sass-lang.com/">Sass</a> CSS3 extension which adds nested rules, variables, mixins, selector inheritance for faster, more efficient CSS coding on the development side while translating into well-formatted, standard CSS on the deployment side.
 </li>
-<li>gives your web app a (customizable) folder structure for development and production.
+<li>a standardized source, debug deployment, and production deployment project structure including a customizable <a href="http://nodejs.org/">Node.Js</a> watch and deployment <a href="http://howtonode.org/intro-to-jake">jakeFile</a> that automatically concatenates and minifies your CSS and JS files for production builds. We recomment using <a href="https://github.com/">Git</a> for code version control and include a .gitignore in the root project folder so debug and production deployment folders are never checked in.
 </li>
-<li>concatinates and minifies your CSS and JS files.
-</li>
-<li>Comes with <a href="http://documentcloud.github.com/underscore/#template">Underscore</a> for JavaScript templating.
-</li>
-<li>allows you to create your own folder hierarchy of JavaScript templates.
-</li>
-<li>automatially creates and maintains production assets (css, js, templates).
-</li>
-<li>can watch for CSS and template changes and concat them on the fly.
-</li>
-<li>Includes a makeFile for concating JS, CSS, and concating templates in one easy step.
-</li>
-<li>detects for IE and includes <a href="http://remysharp.com/2010/10/08/what-is-a-polyfill/">polyfills</a> like <a href="https://github.com/scottjehl/Respond">respond.js</a> for parity in IE.
+<li>the most popular and robust Javascript libraries for application architecture (<a href="http://documentcloud.github.com/backbone/">Backbone.js</a>), view templating (<a href="http://documentcloud.github.com/underscore/#template">Underscore</a>), and day-to-day coding (<a href="http://jquery.com/">jQuery</a>)
 </li>
 </ul>
-
-
-<p>
-Mandible is targetted toward web apps built on JavaScript MVC frameworks (we love <a href="http://documentcloud.github.com/backbone/">Backbone</a>).
-</p></div>
-
-</div>
-
-<div id="outline-container-3" class="outline-2">
-<h2 id="sec-3">Mandible works by </h2>
-<div class="outline-text-2" id="text-3">
-
-<ul>
-<li>compressing and minifying your CSS with <a href="http://sass-lang.com/">Sass</a>.
-</li>
-<li>compresses and minifying your JS with <a href="https://github.com/mishoo/UglifyJS">UglifyJS</a>.
-</li>
-<li>externalizing your JavaScript templates and watching for changes with <a href="https://github.com/krunkosaurus/NodeInterval">NodeInterval</a>.
-</li>
-</ul>
-
-
 </div>
 
 </div>
@@ -209,12 +175,13 @@ Mandible is targetted toward web apps built on JavaScript MVC frameworks (we lov
 </li>
 <li>You need to install <a href="http://sass-lang.com/">Sass</a>. <code>sudo gem install sass</code>
 </li>
-<li>You need to instal <a href="http://nodejs.org/">Node</a>. (Compile it from <a href="http://nodejs.org/#download">here</a>.)
+<li>You need to install <a href="http://nodejs.org/">Node</a>. (Compile it from <a href="http://nodejs.org/#download">here</a>.)
+</li>
+<li>You need to install <a href="http://howtonode.org/intro-to-jake">Jake</a>.
 </li>
 </ul>
 
-<p>Note: Compressed assets are not included in this repo. To see the sample code you must run "make" in the root folder at least once. (Which require you have the above installed.)
-</p></div>
+</div>
 
 </div>
 
@@ -230,31 +197,19 @@ Mandible is targetted toward web apps built on JavaScript MVC frameworks (we lov
 <div class="outline-text-3" id="text-5-1">
 
 <ol>
-<li>In terminal, run the two shell scripts in <code>/bin</code>. Keep them open while you do your development and all your CSS and templates changes are automatically merged into the production ready files.
+<li>In terminal, run the jakeFile watch script which is the default target. Just type "jake" in the project folder and keep this window open while you work. 
 </li>
-<li>While working, view your changes in <code>/dev/index.html</code>
+<li>Edit the html template under /src/. Any CSS or JS additions should be added to their respective folders under /src/ and added to the index.html file between the
+<code>@css concat start@</code> and <code>@css concat end@</code> markers for CSS and <code>@javascript concat start@</code> and <code>@javascript concat end@</code> for javascript that should be auto concatenated. New templates added to the /src/templates/ folder will automatically be added to the generated index.html file in the deployment folders.
 </li>
-<li>When you're done for the day, compress your JavaScript files by typing <code>make</code> in the root project folder. In case your bin scripts are off, this will also automatically compress all CSS, JS, and rerender the templates - but only when necessary.
+<li>While working, view your changes via refreshing the generated index.html file in the <code>/deploy-debug/</code> debug deployment folder in your web browser.
 </li>
-<li>Verify the production file at <code>/prod/index.html</code>.
-</li>
-</ol>
-
-</div>
-
-</div>
-
-<div id="outline-container-5-2" class="outline-3">
-<h3 id="sec-5-2">For build managers: </h3>
-<div class="outline-text-3" id="text-5-2">
-
-<ol>
-<li>Simply type <code>make -B</code> to force all CSS, JS, and templates processes to run. Push to production box(es) and / or CDN.
+<li>When you want to generate a production ready version of the deployment folder, in a new Terminal tab type <code>jake build-prod</code>. Run <code>jake clean-prod</code> to remove previous generated code before the build. The production deployment folder will be generated as <code>/deploy-prod/</code> and contain minified and concatenated Javascript in <code>/deploy-prod/src/js/index.js</code> and CSS in <code>/deploy-prod/src/css/index.css</code>. We recommend utilizing the "deploy-staging" and <code>deploy-prod</code> stub tasks to execute copying deployment folders to staging and production environments.
 </li>
 </ol>
 
-
 </div>
+
 </div>
 
 </div>
@@ -265,19 +220,19 @@ Mandible is targetted toward web apps built on JavaScript MVC frameworks (we lov
 
 <pre class="example">
 .
-├── /prod                          &lt;-- "Production" folder container html and compressed assets.
+├── /deploy-prod                   &lt;-- "Production" folder containing html and compressed assets. Generated with the "jake build-prod" task. The contents of this folder is what is deployed to production environments and includes all static assets. 
 │   └── index.html                 &lt;-- The production-ready file you want to view to launch this webapp.
-├── /dev                           &lt;-- "Development" folder container html and uncompressed assets.
-│   └── index.html                 &lt;-- The uncompressed js prod version with concatinated js templates, use this during daily development.
-├── /src                           &lt;-- "Template" files
-│   ├── index.html                 &lt;-- Prod file without templates. Just used to generate real prod file. Never use it.
-│   ├── index_uncompressed.html    &lt;-- Dev index file with raw js. Do your development here.
-│   └── /templates                 &lt;-- Folder of JavaScript templates, anytime any of these are edited dev and prod pages get automatically updated.
-├── /bin                           &lt;-- Dev shell scripts.
-│   ├── sass-watch.sh              &lt;-- Run this in another terminal tab to watch for css changes. It will automatically concat and minify to assets/css
-│   └── template-watch.sh          &lt;-- Run this in another terminal tab to watch for template changes. All templates get concatinated into assets/*.html files.
-├── /vendor                        &lt;-- Open-source shell scripts referenced by /bin scripts.
-└── makefile                       &lt;-- make utility for concatinating and minifying all js (and css and templates) to assets folder.
+├── /dev                           &lt;-- "Development" folder containing and uncompressed and optimized-for-debugging version of your deployment folder.
+│   └── index.html                 &lt;-- The generated uncompressed version of the html file to use during daily development.
+├── /src                           &lt;-- Source files used to generate the deploy-debug and deploy-prod folders
+│   ├── index.html                 &lt;-- index.html template used to generate the debug and prod versions. Include CSS and JS concat lists between respective markers.
+│   └── /templates                 &lt;-- Folder of JavaScript view templates, automatically integrated into debug and prod index.html file via jake tasks.
+│   └── /css                       &lt;-- Folder of CSS files. Add new files to the index.html file between the @css concat@ markers. They will be linked directly in debug deployment folder and minified and concatenated in the production folder. Sass files are automatically converted to CSS via the build script.
+│   └── /js                        &lt;-- Folder of JS files. Add new files to the index.html file between the @javascript concat@ markers. They will be linked directly in debug deployment folder and minified and concatenated in the production folder.
+│   └── /images                    &lt;-- Folder for static assets. Static asset folders are symlinked in the deploy-debug folder and copied as is to the prod folder.
+│   └── /polyfill                  &lt;-- Folder for javascript polyfills. Static folder treated similarly to the /images/ folder. Integrate polyfills in your index.html template using Modernizr.
+├── /node_modules                  &lt;-- node.js modules referenced by tasks in the jakeFile
+└── jakeFile                       &lt;-- node.js equivalent of makeFile. All build and concat watching tasks are defined and run from here.
 </pre>
 
 
@@ -290,19 +245,9 @@ Mandible is targetted toward web apps built on JavaScript MVC frameworks (we lov
 <div class="outline-text-2" id="text-7">
 
 <ul>
-<li>You should probably put production ready folders <code>prod/js</code> and <code>prod/js</code> under <code>.gitignore</code> so they aren't comitted to your repository (this is done for you.)
+<li>Generated debug and production folders =deploy-debug= and =deploy-prod= are added to =.gitignore= so they aren't committed to your repository. If using a CVS other then GIT, make sure these folders are not checked in to your CVS. 
 </li>
-<li>If you want just the SASS bits steal just the sass script in <code>/bin/watch-css.sh</code> and <code>src/scss/index.scss</code>.
-</li>
-<li>If you want just the js compression features Steal the <code>makeFile</code> and the <code>vendor</code> folder.
-</li>
-<li>If you want just the template concat / watch features clone <a href="https://github.com/krunkosaurus/NodeInterval">NodeInterval</a>.
-</li>
-<li>We use  <a href="http://html5boilerplate.com/mobile">HTML Mobile Boilerplate</a>. Read up on it for lots of good tidbits like the ellipsis class.
-</li>
-<li>We recommend <a href="http://css3pie.com/">CSSPie</a> for advance CSS3 support in IE.
-</li>
-<li>We'll probably be open-sourcing our Backbone layer that fits on top of this in the future.
+<li>There is a plethora of great libraries and utilities included with Mandible2. Its strongly recommended that you read up on each to best utilize the potential of each and to make sure they are working with you not against you. 
 </li>
 </ul>
 
@@ -310,36 +255,9 @@ Mandible is targetted toward web apps built on JavaScript MVC frameworks (we lov
 
 </div>
 
-<div id="outline-container-8" class="outline-2">
-<h2 id="sec-8">Projects we use and recommend: </h2>
-<div class="outline-text-2" id="text-8">
-
-<ul>
-<li><a href="http://documentcloud.github.com/backbone/">backbone.js</a> - MVC JavaScript framework that utilizes <a href="http://jquery.com/">jQuery</a> and
-  <a href="http://documentcloud.github.com/underscore/">underscore.js</a>.
-  Underscore's templating ability is especially useful.
-</li>
-<li><a href="http://getskeleton.com/">Skeleton</a> - Grid-based CSS layout system to allow content to reflow to various
-  browser widths.
-</li>
-<li><a href="https://developers.facebook.com/docs/reference/javascript/">Facebook JavaScript SDK</a> - The JavaScript SDK provides a rich set of
-  client-side functionality for accessing Facebook's server-side API calls.
-</li>
-<li><a href="http://www.schillmania.com/projects/soundmanager2/">Soundmanager 2</a> - Cross-browser audio support.
-</li>
-<li><a href="http://cubiq.org/iscroll-4">iScroll 4</a> - JS lib for native scrolling ability in subsections.
-</li>
-<li><a href="http://sass-lang.com/">Sass</a> - Ruby Gem for organizing and minifying CSS.
-</li>
-<li><a href="https://github.com/krunkosaurus/NodeInterval">Node Interval</a> - Node utility for managing and concatenating template files.
-</li>
-</ul>
-
-</div>
-</div>
 <div id="postamble">
-<p class="date">Date: 2011-09-22 Thu</p>
-<p class="author">Author: Mauvis Ledford</p>
+<p class="date">Date: 2012-02-06 Thu</p>
+<p class="author">Author: Mauvis Ledford, Mark Ledford</p>
 <p class="creator">Org version 7.6 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 </div>
