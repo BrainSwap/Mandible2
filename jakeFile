@@ -55,10 +55,10 @@ function parseCSSFileList(){
 }
 function generateConcatedTemplates(){
 	concatedTemplates = ""
-	var files = fs.readdirSync('src/templates/');
+	var files = listFilesRecursive('src/templates/');
 	files.forEach(function(file){
 		if (file.indexOf(".tmpl")!=-1){
-			concatedTemplates+=fs.readFileSync('src/templates/'+file, "utf8")+"\n     ";
+			concatedTemplates+=fs.readFileSync(file, "utf8")+"\n     ";
 		}
     });
 }
@@ -210,6 +210,25 @@ function updateProdIndexFile(){
 	        console.log("error writing to index template: "+err);
 	    }
 	});
+}
+
+listFilesRecursive = function(sourceDir){
+    var files = [];
+    try {
+        var filesToCheck = fs.readdirSync(sourceDir);
+        for(var i = 0; i < filesToCheck.length; i++) {
+            var filePath = platformProofPath(sourceDir + filesToCheck[i]);
+            var currFile = fs.lstatSync(filePath);
+            if(currFile.isDirectory()) {
+                files = files.concat(listFilesRecursive(filePath+"/"));
+            } else {
+                files.push(sourceDir+filesToCheck[i]);
+            }
+        }
+    } catch (err) {
+        throw new Error(err.message);
+    }
+    return files;
 }
 
 //from https://github.com/ryanmcgrath/wrench-js/blob/master/lib/wrench.js
