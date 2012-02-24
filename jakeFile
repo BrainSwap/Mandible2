@@ -72,7 +72,7 @@ function convertAndCopyCSSDev(path){
 			util.puts(stdout);
 		});
 	} else {
-		exec("sass --style=expanded --update "+path+":"+debugFolder+"/css/"+filename, function(error, stdout, stderr){
+		exec("sass --style=expanded --load-path src/css/ --update "+path+":"+debugFolder+"/css/"+filename, function(error, stdout, stderr){
 			util.puts(stdout);
 		});
 	}
@@ -102,6 +102,7 @@ function uglifyJS(str){
 }
 /* Checks if directory exists, creates if needed with optional created callback. */
 function directoryCheck(dir, callback){
+    dir = platformProofPath(dir);
     if (!path.existsSync(dir)){
         console.log(dir + " folder doesn't exist. Creating...");
         fs.mkdirSync(dir);
@@ -112,15 +113,17 @@ function directoryCheck(dir, callback){
 }
 
 /* copy a file synchronously to a destination file.*/
-//TODO: add windows support
 function copyFileSync(srcFile, destFile) {
+    srcFile = platformProofPath(srcFile);
+    destFile = platformProofPath(destFile);
 	var BUF_LENGTH, buff, bytesRead, fdr, fdw, pos;
 	BUF_LENGTH = 64 * 1024;
 	buff = new Buffer(BUF_LENGTH);
 	fdr = fs.openSync(srcFile, 'r');
 	var lastChar = destFile.charAt(destFile.length-1);
-	if (lastChar=="/"){
-	    var fileName = srcFile.split("/");
+	var slashType = isWin ? "\\" : "/";
+	if (lastChar==slashType){
+	    var fileName = srcFile.split(slashType);
 	    fileName = fileName[fileName.length-1];
 	    destFile = destFile+fileName;
 	}
@@ -128,6 +131,7 @@ function copyFileSync(srcFile, destFile) {
 	bytesRead = 1;
 	pos = 0;
 	while (bytesRead > 0) {
+	  //WARNING this creates an error on windows on latest node (.6.11), use .6.10 for now https://github.com/joyent/node/issues/2807
 	  bytesRead = fs.readSync(fdr, buff, 0, BUF_LENGTH, pos);
 	  fs.writeSync(fdw, buff, 0, bytesRead);
 	  pos += bytesRead;
@@ -138,25 +142,19 @@ function copyFileSync(srcFile, destFile) {
 
 function removeFolder(folder){
     folder = platformProofPath(folder);
-    if (isWin){
-        exec('rd /s /q '+folder);
-    }else{
-        //exec('rm -rf '+folder);
-        rmdirSyncRecursive(folder, true);
-    }
+    rmdirSyncRecursive(folder, true);
 }
 
 /* synchronously create sym link of */
 function createSymLink(src, dest){
     src = platformProofPath(src);
     dest = platformProofPath(dest);
-    console.log("creating sym link src: "+src+" dest: "+dest);
-    if (isWin){
-        exec('mklink /D '+dest+' '+src);
-    } else {
-        fs.symlinkSync(src, dest, "dir");
-        //exec('ln -s '+src+' '+dest);
+    if (!isWin){
+        //weird on mac the symlinks need this or won't work
+        src = "../"+src;
     }
+    console.log("creating sym link src: "+src+" dest: "+dest);
+    fs.symlinkSync(src, dest, "dir");
 }
 
 /* correct the slashes in paths for alternate platforms */
@@ -213,6 +211,7 @@ function updateProdIndexFile(){
 }
 
 listFilesRecursive = function(sourceDir){
+    sourceDir = platformProofPath(sourceDir);
     var files = [];
     try {
         var filesToCheck = fs.readdirSync(sourceDir);
@@ -241,7 +240,8 @@ listFilesRecursive = function(sourceDir){
  *  Note: Directories should be passed to this function without a trailing slash.
  */
 copyDirSyncRecursive = function(sourceDir, newDirLocation) {
-
+    sourceDir = platformProofPath(sourceDir);
+    newDirLocation = platformProofPath(newDirLocation);
     /*  Create the directory where all our junk is moving to; read the mode of the source directory and mirror it */
     var checkDir = fs.statSync(sourceDir);
     fs.mkdirSync(newDirLocation, checkDir.mode);
@@ -273,6 +273,7 @@ copyDirSyncRecursive = function(sourceDir, newDirLocation) {
  *  Asynchronous version. :\
  */
 rmdirSyncRecursive = function(path, failSilent) {
+    path = platformProofPath(path);
     var files;
 
     try {
@@ -286,13 +287,13 @@ rmdirSyncRecursive = function(path, failSilent) {
     for(var i = 0; i < files.length; i++) {
         var currFile = fs.lstatSync(path + "/" + files[i]);
         console.log("checking: "+path + "/" + files[i]);
-        if(currFile.isDirectory()){
+        if(currFile.isSymbolicLink()) {
+            // Unlink symlinks
+            fs.unlinkSync(path + "/" + files[i]);
+        } else if(currFile.isDirectory()){
             // Recursive function back to the beginning
             console.log("curFile is dir: "+path + "/" + files[i]+" sym: "+currFile.isSymbolicLink());
             rmdirSyncRecursive(path + "/" + files[i]);
-        } else if(currFile.isSymbolicLink()) {
-            // Unlink symlinks
-            fs.unlinkSync(path + "/" + files[i]);
         } else {
             // Assume it's a file - perhaps a try/catch belongs here?
             fs.unlinkSync(path + "/" + files[i]);
@@ -327,7 +328,11 @@ task('clean-prod', [], function(params) {
 desc('Remove dev folder so you can rebuild it.');
 task('clean-dev', [], function(params) {
     console.log('Removing dev folder...');
-    removeFolder(debugFolder);
+    //WARNING with windows node.js (even latest .6.11) fs.lstatSync doesn't properly detect symbolic links on windows
+    //only this questionable mention under fs.Stats in official node documentation: stats.isSymbolicLink() (only valid with fs.lstat())
+    //this will cause passing a folder like below that has symlinks in it to a recusive delete function to delete the 
+    //content inside of the symlink folders instead of the symlinks themselves. So for now, on windows, don't delete this folder :/
+    if (!isWin) removeFolder(debugFolder);
 });
 
 
@@ -353,9 +358,9 @@ task('install-prod', [], function(params) {
 desc('Create dev and prod folders and set up sym links..');
 task('install-dev', [], function(params) {
     directoryCheck(debugFolder, function(dir){ 
-        createSymLink("../src/images", debugFolder+"/images");
-        createSymLink("../src/js", debugFolder+"/js");
-        createSymLink("../src/polyfill", debugFolder+"/polyfill");
+        createSymLink("src/images", debugFolder+"/images");
+        createSymLink("src/js", debugFolder+"/js");
+        createSymLink("src/polyfill", debugFolder+"/polyfill");
         directoryCheck(debugFolder+'/css');
         copyFileSync('src/apple-touch-icon-57x57-precomposed.png', debugFolder+'/');
     	copyFileSync('src/apple-touch-icon-72x72-precomposed.png', debugFolder+'/');
@@ -373,11 +378,14 @@ task('css-prod', [], function(params) {
     console.log('Compressed CSS for prod');
     //combine all css into a single scss index file
     parseCSSFileList();
-    var command = "cat ";
+    
+    var allCSSText = "";
     for (i = 0, len = CSS_FILES.length; i < len; i++){
-        command+='src/'+CSS_FILES[i]+" ";
+        allCSSText+=fs.readFileSync("src/"+CSS_FILES[i], "utf8");
     }
-    command+="| sass --style=compressed --scss > "+prodFolder+"/css/index.css";
+    fs.writeFileSync(prodFolder+"/css/index.scss", allCSSText, 'utf8');
+    
+    var command = "sass --style=compressed --load-path src/css/ --scss "+prodFolder+"/css/index.scss "+prodFolder+"/css/index.css";
     exec(command, function(error, stdout, stderr){
         if (stdout){
             console.log(stdout);
@@ -389,6 +397,8 @@ task('css-prod', [], function(params) {
             console.log('exec error: ' + error);
         }
     });
+    //todo: remove the temporary index.scss file in the prod folder. Can't just remove with unlinkSync as sass call is asynch
+    //fs.unlinkSync(prodFolder+"/css/index.scss");
 });
 
 desc('Compress all JS prod');
