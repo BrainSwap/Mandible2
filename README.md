@@ -25,6 +25,14 @@ Mandible: Brainswap’s web application build and development toolset + project 
                 |__          \.    ^    ./
                                ^~~~^~~~^
 
+# Change Log
+5/12/2012 - Integrated major, backwards compatible updates to the Jake system from the last project we launched which includes:
+
+- Cleaner, enhanced Jakefile with custom variables at the top.
+- Production, QA, and Staging deployment endpoint support.
+- [Amazon S3](http://aws.amazon.com/s3/) asset uploading with gzip, cache-control, versioning, and cache breaking support. 
+
+
 # Welcome
 
 Mandible2 is a text editor agnostic HTML5/CSS3/Javascript web application development toolset + project template developed by [Brainswap](http://www.brainswap.com/) while working for client’s like [SocialGenius](http://www.socialgeni.us/) and [Skype](http://www.skype.com/intl/en-us/home), it is now maintained here. Utilizing an ecosystem of well-supported libraries and technologies Mandible provides structure, consistency, and a framework of standardized solutions to development pitfalls and web technology issues when dealing with developing and deploying javascript heavy web apps and mobile friendly web sites.
@@ -50,13 +58,15 @@ To use this tools you need to have the following installed:
 
 # To use
 
-1. In terminal, run the Jakefile watch script which is the default target. Just type `jake` in the project folder and keep this window open while you work.
+1. Install the above requirements, then in terminal, run the Jakefile watch script by typing `jake` in the project folder. Keep this process running while you work.
 
-2. Edit the html template under src. Any CSS or JS additions should be added to their respective folders under src and added to the index.html file between the `@css concat start@` and `@css concat end@` markers for CSS and `@javascript concat start@` and `@javascript concat end@` for javascript that should be auto concatenated. New templates added to the src/templates folder will automatically be added to the generated index.html file in the deployment folders.
+2. View your project by browsing to the `deploy-debug` folder. If you're running a web server set document root to `deploy-debug`.
 
-3. While working, view your changes via refreshing the generated index.html file in the `/deploy-debug/` debug deployment folder in your web browser.
+3. Edit the html template under src. Any CSS or JS additions should be added to their respective folders under src and added to the index.html file between the `@css concat start@` and `@css concat end@` markers for CSS and `@javascript concat start@` and `@javascript concat end@` for javascript that should be auto concatenated. New templates added to the src/templates folder will automatically be added to the generated index.html file in the deployment folders.
 
-4. When you want to generate a production ready version of the deployment folder, in a new Terminal tab type `jake build-prod`. Run `jake clean-prod` to remove previous generated code before the build. The production deployment folder will be generated as /deploy-prod/ and contain minified and concatenated Javascript in `/deploy-prod/src/js/index.js` and CSS in `/deploy-prod/src/css/index.css`. We recommend utilizing the `deploy-staging` and `deploy-prod` stub tasks to execute copying deployment folders to staging and production environments.
+4. While working, view your changes via refreshing the generated index.html file in the `/deploy-debug/` debug deployment folder in your web browser.
+
+5. When you want to generate a production ready version of the deployment folder, in a new Terminal tab type `jake build-prod`. Run `jake clean-prod` to remove previous generated code before the build. The production deployment folder will be generated as /deploy-prod/ and contain minified and concatenated Javascript in `/deploy-prod/src/js/index.js` and CSS in `/deploy-prod/src/css/index.css`. We recommend utilizing the `deploy-staging` and `deploy-prod` stub tasks to execute copying deployment folders to staging and production environments.
 
 # Explanation of application architecture
 
