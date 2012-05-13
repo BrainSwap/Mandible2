@@ -16,20 +16,20 @@ NodeWatch.setMaxListeners(0);
 /************************ TO MODIFY ************************/
 
 var APP_NAMESPACE = 'website',
-    APP_DOMAIN = 'beta.website.com',
+    APP_DOMAIN = 'website.com',
     APP_QA_DOMAIN = 'qa.website.net',
     APP_STAGING_DOMAIN = 'staging.website.net';
 
 // Deploy variables
 var PROD_SERVER_USER = 'deploy',
-    PROD_SERVER_IP = '255.255.255.255',
-    PROD_DEPLOY_SCRIPT = 'deploy-prod.sh',
-    QA_SERVER_USER = 'deploy',
-    QA_SERVER_IP = '255.255.255.255',
-    QA_DEPLOY_SCRIPT = 'deploy-qa.sh',
-    STAGING_SERVER_USER = 'deploy',
-    STAGING_SERVER_IP = '255.255.255.255',
-    STAGING_DEPLOY_SCRIPT = 'deploy-staging.sh';
+    PROD_SERVER_IP = '', // 255.255.255.255
+    PROD_DEPLOY_SCRIPT = '', // deploy-prod.sh
+    QA_SERVER_USER = '', // deploy
+    QA_SERVER_IP = '', // 255.255.255.255
+    QA_DEPLOY_SCRIPT = '', // deploy-qa.sh
+    STAGING_SERVER_USER = '', // deploy
+    STAGING_SERVER_IP = '', // 255.255.255.255
+    STAGING_DEPLOY_SCRIPT = ''; // deploy-staging.sh
 
 // Amazon S3 Variables
 var S3_KEY = '',
@@ -41,9 +41,9 @@ var S3_KEY = '',
         '/polyfill/'
         // '/webfonts/' // Host web fonts locally as they won't work in FF.
     ],
-    S3_PROD_BUCKET = 'https://pr-website.s3.amazonaws.com',
-    S3_QA_BUCKET = 'https://qa-website.s3.amazonaws.com',
-    S3_STAGING_BUCKET = 'https://st-website.s3.amazonaws.com';
+    S3_PROD_BUCKET = '', // https://pr-website.s3.amazonaws.com
+    S3_QA_BUCKET = '', // https://qa-website.s3.amazonaws.com
+    S3_STAGING_BUCKET = ''; // https://st-website.s3.amazonaws.com
 
 /************************ NOT TO MODIFY ************************/
 
