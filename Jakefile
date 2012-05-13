@@ -2,11 +2,11 @@ var fs = require('fs'),
 path = require('path'),
     jsp = require('./node_modules/uglify-js').parser,
     pro = require('./node_modules/uglify-js').uglify,
-NodeWatch = require('./node_modules/nodewatch'),
-WatchTree = require('./node_modules/watch-tree'),
+    NodeWatch = require('./node_modules/nodewatch'),
+    WatchTree = require('./node_modules/watch-tree'),
     knox = require('knox'),
-exec = require('child_process').exec,
-util = require('util'),
+    exec = require('child_process').exec,
+    util = require('util'),
     ISWIN = !!process.platform.match(/^win/);
 
 // Increase limit of EventImitters
@@ -19,22 +19,6 @@ var APP_NAMESPACE = 'website',
     APP_DOMAIN = 'beta.website.com',
     APP_QA_DOMAIN = 'qa.website.net',
     APP_STAGING_DOMAIN = 'staging.website.net';
-
-// Development folder paths
-var PROD_FOLDER = 'deploy-prod',
-    DEBUG_FOLDER = 'deploy-debug';
-
-// JavaScript variables
-var JS_FILES = [], // JS file paths parsed from src/index.html between @js concat start@ and @js concat end@)
-    JS_START_MARKER = '@javascript concat start@',
-    JS_END_MARKER = '@javascript concat end@';
-
-// CSS Variables
-var CSS_FILES = [], // parsed from src/index.html between @css concat start@ and @css concat end@
-    TEMPLATES_DIRTY = true,
-    CONCATED_TEMPLATES,
-    CSS_START_MARKER = '@css concat start@',
-    CSS_END_MARKER = '@css concat end@';
 
 // Deploy variables
 var PROD_SERVER_USER = 'deploy',
@@ -62,6 +46,22 @@ var S3_KEY = '',
     S3_STAGING_BUCKET = 'https://st-website.s3.amazonaws.com';
 
 /************************ NOT TO MODIFY ************************/
+
+// Development folder paths
+var PROD_FOLDER = 'deploy-prod',
+    DEBUG_FOLDER = 'deploy-debug';
+
+// JavaScript variables
+var JS_FILES = [], // JS file paths parsed from src/index.html between @js concat start@ and @js concat end@)
+    JS_START_MARKER = '@javascript concat start@',
+    JS_END_MARKER = '@javascript concat end@';
+
+// CSS Variables
+var CSS_FILES = [], // parsed from src/index.html between @css concat start@ and @css concat end@
+    TEMPLATES_DIRTY = true,
+    CONCATED_TEMPLATES,
+    CSS_START_MARKER = '@css concat start@',
+    CSS_END_MARKER = '@css concat end@';
 
 /********************/
 /* Utiliy functions */
@@ -118,13 +118,6 @@ function compressCSS(){
     fs.writeFileSync(PROD_FOLDER + '/css/index.scss', allCSSText, 'utf8');
 
     execLog('sass --style=compressed --load-path src/css/ --scss ' + PROD_FOLDER + '/css/index.scss ' + PROD_FOLDER + '/css/index.css');
-
-    //MARK - adding this special case to copy over the single dark theme. We'll have to update Mandible to handle these independent css folders better for prod
-    directoryCheck(PROD_FOLDER + '/css/templates');
-    directoryCheck(PROD_FOLDER + '/css/templates/window_pane');
-    directoryCheck(PROD_FOLDER + '/css/templates/window_pane/dark');
-
-    execLog('sass --style=compressed --load-path src/css/ --scss src/css/templates/window_pane/dark/index.scss ' + PROD_FOLDER + '/css/templates/window_pane/dark/index.css');
     //todo: remove the temporary index.scss file in the prod folder. Can't just remove with unlinkSync as sass call is asynch
     //fs.unlinkSync(PROD_FOLDER+'/css/index.scss');
 }
