@@ -118,13 +118,6 @@ function compressCSS(){
     fs.writeFileSync(PROD_FOLDER + '/css/index.scss', allCSSText, 'utf8');
 
     execLog('sass --style=compressed --load-path src/css/ --scss ' + PROD_FOLDER + '/css/index.scss ' + PROD_FOLDER + '/css/index.css');
-
-    //MARK - adding this special case to copy over the single dark theme. We'll have to update Mandible to handle these independent css folders better for prod
-    directoryCheck(PROD_FOLDER + '/css/templates');
-    directoryCheck(PROD_FOLDER + '/css/templates/window_pane');
-    directoryCheck(PROD_FOLDER + '/css/templates/window_pane/dark');
-
-    execLog('sass --style=compressed --load-path src/css/ --scss src/css/templates/window_pane/dark/index.scss ' + PROD_FOLDER + '/css/templates/window_pane/dark/index.css');
     //todo: remove the temporary index.scss file in the prod folder. Can't just remove with unlinkSync as sass call is asynch
     //fs.unlinkSync(PROD_FOLDER+'/css/index.scss');
 }
