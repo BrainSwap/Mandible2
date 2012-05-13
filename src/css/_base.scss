@@ -1,10 +1,26 @@
 .chromeframe { margin: 0.2em 0; background: #ccc; color: black; padding: 0.2em 0; }
 
+@font-face {
+  font-family: 'LatoRegular';
+  src: url('/webfonts/lato-reg-webfont.eot');
+  src: url('/webfonts/lato-reg-webfont.eot?#iefix') format('embedded-opentype'),
+    url('/webfonts/lato-reg-webfont.woff') format('woff'),
+    url('/webfonts/lato-reg-webfont.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body{
+  font-family: 'LatoRegular';
+}
+
 h1{
-  font-family: helvetica;
+  font-family: 'LatoRegular';
 };
+
 ul, li{
   margin: 0;
   padding: 0;
   list-style-type: none;
 }
+
