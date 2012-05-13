@@ -43,9 +43,9 @@
         @css concat end@
         <title>Sample page</title>
         <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
-        <script src="polyfill/modernizr-custom.js"></script>
+        <script src="@cdnhost@/polyfill/modernizr-custom.js"></script>
         <!-- Media Queries Polyfill https://github.com/shichuan/mobile-html5-boilerplate/wiki/Media-Queries-Polyfill -->
-        <script>Modernizr.mq('(min-width:0)') || document.write('<script src="polyfill/respond.min.js">\x3C/script>')</script>
+        <script>Modernizr.mq('(min-width:0)') || document.write('<script src="@cdnhost@/polyfill/respond.min.js">\x3C/script>')</script>
     </head>
     <body>
     <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you support IE 6. chromium.org/developers/how-tos/chrome-frame-getting-started -->

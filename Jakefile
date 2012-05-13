@@ -2,11 +2,11 @@ var fs = require('fs'),
 path = require('path'),
     jsp = require('./node_modules/uglify-js').parser,
     pro = require('./node_modules/uglify-js').uglify,
-    NodeWatch = require('./node_modules/nodewatch'),
-    WatchTree = require('./node_modules/watch-tree'),
+NodeWatch = require('./node_modules/nodewatch'),
+WatchTree = require('./node_modules/watch-tree'),
     knox = require('knox'),
-    exec = require('child_process').exec,
-    util = require('util'),
+exec = require('child_process').exec,
+util = require('util'),
     ISWIN = !!process.platform.match(/^win/);
 
 // Increase limit of EventImitters
@@ -107,14 +107,16 @@ function gzipFile(file){
 }
 
 /* Called by css:<env> to compress css */
-function compressCSS(){
+function compressCSS(domain){
     //combine all css into a single scss index file
     parseCSSFileList();
 
     var allCSSText = '';
     for (i = 0, len = CSS_FILES.length; i < len; i++){
-        allCSSText+=fs.readFileSync('src/' + CSS_FILES[i], 'utf8');
+        allCSSText += fs.readFileSync('src/' + CSS_FILES[i], 'utf8');
     }
+
+    allCSSText = namespaceWebfonts(domain, allCSSText);
     fs.writeFileSync(PROD_FOLDER + '/css/index.scss', allCSSText, 'utf8');
 
     execLog('sass --style=compressed --load-path src/css/ --scss ' + PROD_FOLDER + '/css/index.scss ' + PROD_FOLDER + '/css/index.css');
@@ -122,14 +124,12 @@ function compressCSS(){
     //fs.unlinkSync(PROD_FOLDER+'/css/index.scss');
 }
 
-function namespaceWebfonts(domain){
-    var file = 'src/css/_base.scss';
-    var content = fs.readFileSync(file, 'utf8');
-    content = content.replace(/\/webfonts\//g, 'https://' + domain + '/webfonts/');
-    fs.writeFileSync(file, content)
+function namespaceWebfonts(domain, text){
+    return text.replace(/\/webfonts\//g, 'http://' + domain + '/webfonts/');
 }
 
 function uploadMediaFoldersToS3(bucket){
+    console.log('Uploading media folders to %s...', bucket);
     var bucketDomain = bucket.match(/\/\/(.*)\.s3/)[1];
     S3_MEDIA_FOLDERS.forEach(function(folder){
         uploadFolderToS3(bucketDomain, PROD_FOLDER + folder);
@@ -589,17 +589,17 @@ namespace('build', function () {
     });
 
     desc('Does a production build (but not deploy).');
-    task('prod', ['install:prod', 'css:prod', 'js:prod', 'templates:prod', 'version:prod'], function(params) {
+    task('prod', ['install:prod', 'templates:prod', 'css:prod', 'js:prod', 'version:prod'], function(params) {
         console.log('Done with tasks.');
     });
 
     desc('Does a staging build (but not deploy).');
-    task('staging', ['install:prod', 'css:staging', 'js:prod', 'templates:prod', 'version:staging'], function(params) {
+    task('staging', ['install:prod', 'templates:prod', 'css:staging', 'js:prod', 'version:staging'], function(params) {
         console.log('Done with tasks.');
     });
 
     desc('Does a qa build (but not deploy).');
-    task('qa', ['install:prod', 'css:qa', 'js:prod', 'templates:prod', 'version:qa'], function(params) {
+    task('qa', ['install:prod', 'templates:prod', 'css:qa', 'js:prod', 'version:qa'], function(params) {
     console.log('Done with tasks.');
 });
 
@@ -699,20 +699,17 @@ namespace('css', function () {
     desc('Compress and prep all CSS into prod /css/index.css');
     task('prod', [], function() {
     console.log('Compressed CSS for prod');
-        namespaceWebfonts(APP_DOMAIN);
-        compressCSS();
+        compressCSS(APP_DOMAIN);
     });
 
     task('staging', [], function() {
         console.log('Compressed CSS for staging');
-        namespaceWebfonts(APP_STAGING_DOMAIN);
-        compressCSS();
+        compressCSS(APP_STAGING_DOMAIN);
     });
 
     task('qa', [], function() {
         console.log('Compressed CSS for qa');
-        namespaceWebfonts(APP_QA_DOMAIN);
-        compressCSS();
+        compressCSS(APP_QA_DOMAIN);
     });
 });
 
@@ -720,13 +717,13 @@ namespace('css', function () {
 /* JS           */
 /****************/
 namespace('js', function () {
-desc('Compress all JS prod');
+    desc('Compress all JS prod');
     task('prod', [], function(params) {
-    console.log('Compressing JS for prod');
-    var concatFiles = concatJS();
-    //remove console references
-    concatFiles = concatFiles.replace(/console.(log|debug|info|warn|error|assert)(.apply)?\(.*\);?/g, '');
-    var uglifyFiles = uglifyJS(concatFiles);
+        console.log('Compressing JS for prod');
+        var concatFiles = concatJS();
+        //remove console references
+        concatFiles = concatFiles.replace(/console.(log|debug|info|warn|error|assert)(.apply)?\(.*\);?/g, '');
+        var uglifyFiles = uglifyJS(concatFiles);
         fs.writeFileSync(PROD_FOLDER + '/js/index.js', uglifyFiles, 'utf8');
     });
 });
@@ -735,12 +732,12 @@ desc('Compress all JS prod');
 /* Templates    */
 /****************/
 namespace('templates', function () {
-desc('Concat templates into HTML files into prod index.html');
+    desc('Concat templates into HTML files into prod index.html');
     task('prod', [], function(params) {
-    console.log('Concating Templates for prod');
-    generateConcatedTemplates();
-    updateProdIndexFile();
-});
+        console.log('Concating Templates for prod');
+        generateConcatedTemplates();
+        updateProdIndexFile();
+    });
 });
 
 /****************/
