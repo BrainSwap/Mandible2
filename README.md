@@ -25,6 +25,9 @@ Mandible: Brainswap’s web application build and development toolset + project 
                 |__          \.    ^    ./
                                ^~~~^~~~^
 
+# Sample project!
+- There is now an open-source, sample Responsive Backbone Application built using Mandible2. Check it out at [http://dontbreak.me/](http://dontbreak.me/). Complete source code [https://github.com/BrainSwap/dontbreakme](https://github.com/BrainSwap/dontbreakme).
+
 # Change Log
 5/12/2012 - Integrated major, backwards compatible updates to the Jake system from the last project we launched which includes:
 
