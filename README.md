@@ -50,7 +50,7 @@ the [Sass](http://sass-lang.com/) CSS3 extension which adds nested rules, variab
 
 * the most popular and robust Javascript libraries for application architecture ([Backbone.js](http://documentcloud.github.com/backbone/)), view templating ([Underscore](http://documentcloud.github.com/underscore/#template)), and day-to-day coding ([jQuery](http://jquery.com/))
 
-#Requirements
+# Requirements
 
 To use this tools you need to have the following installed:
 
